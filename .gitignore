@@ -1,0 +1,93 @@
+# ---------------------------------------------
+# Sunrise Dental Clinic Management System
+# .gitignore for Eclipse + Maven + Tomcat project
+# ---------------------------------------------
+
+# ----- Maven build output -----
+target/
+*.war
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+mvnw
+mvnw.cmd
+
+# ----- Compiled Java class files -----
+*.class
+
+# ----- Eclipse IDE files -----
+.classpath
+.project
+.settings/
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+.apt_generated/
+.factorypath
+.springBeans
+.sts4-cache/
+
+# ----- Eclipse Web Tools (WTP) / Tomcat deployment -----
+.tomcatplugin
+/build/
+/WebContent/WEB-INF/lib/
+.wtpmodules
+org.eclipse.wst.common.component
+org.eclipse.wst.common.project.facet.core.xml
+
+# ----- IntelliJ IDEA (if opened by mistake) -----
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ----- VS Code -----
+.vscode/
+
+# ----- Log files -----
+*.log
+logs/
+catalina.out
+
+# ----- Database credentials (never commit real passwords) -----
+src/main/resources/db.local.properties
+*.env
+.env
+
+# ----- Test output -----
+target/surefire-reports/
+target/site/
+*.hprof
+
+# ----- Private working folder (NOT pushed to GitHub) -----
+# Planning notes, drafts, AI assistant files and personal working documents.
+# Files needed for marks (UML, test plan, screenshots) go in documentation/ instead.
+docs/
+CLAUDE.md
+.claude/
+.cursor/
+.aider*
+.github/copilot-instructions.md
+*.prompt.md
+notes/
+draft/
+scratch/
+
+# ----- OS generated files -----
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
