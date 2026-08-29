@@ -1,0 +1,374 @@
+/* =====================================================================
+   Sunrise Dental Clinic - Login screen
+   ===================================================================== */
+
+:root {
+    --navy-900: #0b1f3a;
+    --navy-800: #12305a;
+    --teal-500: #14b8a6;
+    --teal-600: #0d9488;
+    --teal-050: #ecfdf9;
+
+    --ink-900: #0f172a;
+    --ink-600: #475569;
+    --ink-400: #94a3b8;
+    --line: #e2e8f0;
+    --surface: #ffffff;
+    --canvas: #f4f7fb;
+
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --success: #059669;
+    --success-bg: #ecfdf5;
+    --warning: #b45309;
+    --warning-bg: #fffbeb;
+
+    --radius: 14px;
+    --shadow-lg: 0 24px 48px -12px rgba(11, 31, 58, .18);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: var(--canvas);
+    color: var(--ink-900);
+    -webkit-font-smoothing: antialiased;
+}
+
+.login-page {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    min-height: 100vh;
+}
+
+/* ---------------------------------------------------------------
+   Left brand panel
+   --------------------------------------------------------------- */
+.brand-panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    color: #fff;
+    background:
+        radial-gradient(1100px 520px at 15% 10%, rgba(20, 184, 166, .32), transparent 60%),
+        linear-gradient(150deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    overflow: hidden;
+}
+
+/* soft decorative circles */
+.brand-panel::before,
+.brand-panel::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .05);
+}
+
+.brand-panel::before {
+    width: 420px;
+    height: 420px;
+    right: -140px;
+    bottom: -160px;
+}
+
+.brand-panel::after {
+    width: 240px;
+    height: 240px;
+    left: -90px;
+    top: -70px;
+}
+
+.brand-panel__content {
+    position: relative;
+    z-index: 1;
+    max-width: 420px;
+}
+
+.brand-mark {
+    width: 62px;
+    height: 62px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    margin-bottom: 26px;
+    color: var(--teal-500);
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .16);
+}
+
+.brand-name {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -.5px;
+}
+
+.brand-name span {
+    color: var(--teal-500);
+}
+
+.brand-tagline {
+    margin-top: 10px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, .74);
+}
+
+.brand-points {
+    list-style: none;
+    margin-top: 34px;
+    display: grid;
+    gap: 14px;
+}
+
+.brand-points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, .88);
+}
+
+.tick {
+    flex: 0 0 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    border-radius: 50%;
+    color: var(--teal-500);
+    background: rgba(20, 184, 166, .16);
+}
+
+.brand-footer {
+    margin-top: 46px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, .45);
+}
+
+/* ---------------------------------------------------------------
+   Right form panel
+   --------------------------------------------------------------- */
+.form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px 36px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+}
+
+.login-card__head h2 {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.login-card__head p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--ink-600);
+}
+
+/* ---- alerts ---- */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 22px;
+    padding: 12px 14px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+}
+
+.alert__icon {
+    flex: 0 0 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.alert--error {
+    color: var(--danger);
+    background: var(--danger-bg);
+    border-color: #fecaca;
+}
+
+.alert--error .alert__icon {
+    background: var(--danger);
+}
+
+.alert--success {
+    color: var(--success);
+    background: var(--success-bg);
+    border-color: #a7f3d0;
+}
+
+.alert--success .alert__icon {
+    background: var(--success);
+}
+
+.alert--warning {
+    color: var(--warning);
+    background: var(--warning-bg);
+    border-color: #fde68a;
+}
+
+.alert--warning .alert__icon {
+    background: var(--warning);
+}
+
+/* ---- form fields ---- */
+form {
+    margin-top: 26px;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-900);
+}
+
+.field input[type="text"],
+.field input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--ink-900);
+    background: #fbfdff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.field input::placeholder {
+    color: var(--ink-400);
+}
+
+.field input:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--teal-500);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, .16);
+}
+
+.field__password {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--teal-600);
+    background: var(--teal-050);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    background: #d7f7ef;
+}
+
+.field--inline {
+    margin-bottom: 24px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-600);
+    cursor: pointer;
+}
+
+.checkbox input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--teal-600);
+    cursor: pointer;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    background: linear-gradient(135deg, var(--teal-600), var(--teal-500));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .15s ease, filter .15s ease;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.04);
+    box-shadow: 0 10px 22px -8px rgba(13, 148, 136, .6);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+.login-card__foot {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+}
+
+.login-card__foot p {
+    font-size: 12px;
+    color: var(--ink-400);
+}
+
+/* ---------------------------------------------------------------
+   Responsive - the brand panel is hidden on small screens
+   --------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .login-page {
+        grid-template-columns: 1fr;
+    }
+
+    .brand-panel {
+        display: none;
+    }
+
+    .form-panel {
+        min-height: 100vh;
+    }
+}
