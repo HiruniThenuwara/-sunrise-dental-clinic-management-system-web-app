@@ -5,9 +5,9 @@
 <%--
     Doctor working hours and the time slots generated from them.
 
-    The slot grid below is drawn by hand on Day 2. On Day 3 the same grid is
-    produced by SlotService, which divides the working hours by the slot
-    duration and removes any slot that already has an appointment.
+    The slot grid is produced by SlotService, which divides the working
+    hours by the slot duration and removes any slot that already has an
+    appointment.
 --%>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -19,10 +19,6 @@
     </div>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>Slots are drawn by hand today. SlotService generates them from the database on Day 3.</span>
-</div>
 
 <div class="grid-2">
 
@@ -122,7 +118,7 @@
             <div class="form-actions">
                 <button class="btn btn--ghost" type="button">Reset</button>
                 <button class="btn btn--primary" type="button"
-                        onclick="showToast('Saving working hours is connected on Day 3.', 'info')">
+                        onclick="showToast('This feature is not available in this version yet.', 'info')">
                     Save Working Hours
                 </button>
             </div>

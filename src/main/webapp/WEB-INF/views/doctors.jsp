@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<%-- Dentist management - Day 2 interface with sample rows. --%>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
@@ -14,10 +13,6 @@
     <button class="btn btn--primary" type="button" onclick="openModal('doctorModal')">+ Add Dentist</button>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>The form does not save yet. It is connected to the database on Day 3.</span>
-</div>
 
 <section class="panel">
     <header class="panel__head">
@@ -146,7 +141,7 @@
             <button class="modal__close" type="button" onclick="closeModal('doctorModal')" aria-label="Close">&times;</button>
         </header>
 
-        <form class="modal__body" onsubmit="alert('Saving is connected to the database on Day 3.'); return false;">
+        <form class="modal__body" onsubmit="showToast('This feature is not available in this version yet.', 'info'); return false;">
 
             <div class="form-row">
                 <div class="form-field">

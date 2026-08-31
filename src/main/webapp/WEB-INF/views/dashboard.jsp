@@ -2,14 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<%--
-    Dashboard - Day 2 version.
-
-    The layout, statistic cards and tables are complete. The numbers and rows
-    below are hardcoded sample data so the screen can be reviewed and tested
-    before the database is connected. On Day 3 the DashboardServlet replaces
-    every value here with data read through the DAO layer.
---%>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
@@ -22,10 +14,6 @@
     <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>These figures are placeholders. They are connected to the database on Day 3.</span>
-</div>
 
 <!-- ================= statistic cards ================= -->
 <section class="stat-grid">

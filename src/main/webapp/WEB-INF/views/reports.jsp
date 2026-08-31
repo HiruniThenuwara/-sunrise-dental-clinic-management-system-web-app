@@ -20,14 +20,10 @@
     <button class="btn btn--ghost" type="button" onclick="window.print()">Print Report</button>
 </div>
 
-<div class="notice no-print">
-    <span class="notice__tag">Sample data</span>
-    <span>Figures are illustrative. The report queries run against the database on Day 3.</span>
-</div>
 
 <section class="panel no-print">
     <div class="panel__body">
-        <form class="search-row" onsubmit="showToast('Report filters are connected on Day 3.', 'info'); return false;">
+        <form class="search-row" onsubmit="showToast('This feature is not available in this version yet.', 'info'); return false;">
             <div class="form-field">
                 <label for="repFrom">From</label>
                 <input class="input" type="date" id="repFrom" value="2026-08-01">

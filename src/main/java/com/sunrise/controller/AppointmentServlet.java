@@ -18,10 +18,6 @@ import java.io.IOException;
  *   <li>{@code /admin/appointments/new}   - the registration form</li>
  *   <li>{@code /admin/appointments/view}  - full details of one appointment</li>
  * </ul>
- *
- * <p>Day 2 version: the views are filled with sample data so the screens can
- * be reviewed. On Day 3 this servlet calls {@code AppointmentService} to read
- * and write real records.</p>
  */
 @WebServlet(name = "AppointmentServlet",
             urlPatterns = {"/admin/appointments", "/admin/appointments/*"})

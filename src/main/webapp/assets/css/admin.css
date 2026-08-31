@@ -495,7 +495,7 @@ a {
    Dashboard widgets
    ===================================================================== */
 
-/* ---- "sample data" notice bar ---- */
+/* ---- notice bar ---- */
 .notice {
     display: flex;
     align-items: center;

@@ -9,9 +9,6 @@ import java.io.IOException;
 
 /**
  * Management reports for decision making.
- *
- * <p>Day 2 version: forwards to the view so the interface can be reviewed
- * and tested. The database work is added on Day 3.</p>
  */
 @WebServlet(name = "ReportServlet", urlPatterns = {"/admin/reports"})
 public class ReportServlet extends HttpServlet {

@@ -9,9 +9,6 @@ import java.io.IOException;
 
 /**
  * Bill calculation and printable receipt.
- *
- * <p>Day 2 version: forwards to the view so the interface can be reviewed
- * and tested. The database work is added on Day 3.</p>
  */
 @WebServlet(name = "BillingServlet", urlPatterns = {"/admin/billing"})
 public class BillingServlet extends HttpServlet {

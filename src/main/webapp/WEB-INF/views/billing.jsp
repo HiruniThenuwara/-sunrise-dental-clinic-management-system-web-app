@@ -23,10 +23,6 @@
     </div>
 </div>
 
-<div class="notice no-print">
-    <span class="notice__tag">Sample data</span>
-    <span>Totals are calculated in the browser today. BillingService and the Strategy pattern take over on Day 3.</span>
-</div>
 
 <div class="grid-2">
 
@@ -82,7 +78,7 @@
             <div class="form-actions">
                 <button class="btn btn--ghost" type="button" onclick="window.print()">Print Receipt</button>
                 <button class="btn btn--primary" type="button"
-                        onclick="showToast('Saving the bill is connected on Day 3.', 'info')">Save Bill</button>
+                        onclick="showToast('This feature is not available in this version yet.', 'info')">Save Bill</button>
             </div>
 
         </div>
@@ -157,11 +153,6 @@
 
 <script src="${ctx}/assets/js/ui.js"></script>
 <script>
-    /*
-       Day 2 preview of the calculation.
-       On Day 3 the same arithmetic lives in BillingService on the server,
-       where it is unit tested, and this page only displays the result.
-    */
     function money(value) {
         return value.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }

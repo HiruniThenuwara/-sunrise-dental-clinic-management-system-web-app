@@ -9,10 +9,6 @@ import java.io.IOException;
 
 /**
  * Dentist management screen.
- *
- * <p>Day 2 version: forwards to the view so the interface can be reviewed
- * and tested. The DAO calls and the add / edit / delete actions are added
- * on Day 3.</p>
  */
 @WebServlet(name = "DoctorServlet", urlPatterns = {"/admin/doctors"})
 public class DoctorServlet extends HttpServlet {
