@@ -17,7 +17,16 @@
         <h2 class="page-head__title">Reports</h2>
         <p class="page-head__sub">Appointment volume, dentist workload and revenue by treatment.</p>
     </div>
-    <button class="btn btn--ghost" type="button" onclick="window.print()">Print Report</button>
+    <div class="page-head__actions no-print">
+        <button class="btn btn--ghost" type="button" onclick="window.print()">Print Report</button>
+        <a class="btn btn--primary" href="${ctx}/admin/reports/pdf">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3.5v11"/><path d="m7.8 10.3 4.2 4.2 4.2-4.2"/><path d="M4.5 19.5h15"/>
+            </svg>
+            Download PDF
+        </a>
+    </div>
 </div>
 
 

@@ -1655,3 +1655,57 @@ body.modal-open {
         width: 100%;
     }
 }
+
+/* =====================================================================
+   Sign out - top bar button and sidebar link (Requirement 6)
+   ===================================================================== */
+.btn--logout {
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+.btn--logout:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    border-color: transparent;
+    box-shadow: 0 10px 20px -10px rgba(220, 38, 38, .7);
+}
+
+.signout-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #fca5a5;
+    background: rgba(220, 38, 38, .12);
+    border: 1px solid rgba(248, 113, 113, .28);
+    border-radius: 9px;
+    transition: background .14s ease, color .14s ease;
+}
+
+.signout-link:hover {
+    color: #fff;
+    background: rgba(220, 38, 38, .55);
+}
+
+.sidebar__version {
+    text-align: center;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, .32);
+}
+
+/* on very small screens keep only the icon in the top bar */
+@media (max-width: 480px) {
+    .btn--logout .btn__text {
+        display: none;
+    }
+
+    .btn--logout {
+        padding: 10px 12px;
+    }
+}
