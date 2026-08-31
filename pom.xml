@@ -27,6 +27,7 @@
         <jsp.api.version>2.3.3</jsp.api.version>
         <jstl.version>1.2</jstl.version>
         <mysql.version>8.0.33</mysql.version>
+        <openpdf.version>2.2.2</openpdf.version>
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.18.0</mockito.version>
         <h2.version>2.2.224</h2.version>
@@ -66,6 +67,17 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
+        </dependency>
+
+        <!-- ============================================================
+             REPORTING - OpenPDF builds the downloadable PDF reports.
+             This is a small utility library for writing PDF files, not an
+             application framework, so the plain Java requirement still holds.
+             ============================================================ -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>${openpdf.version}</version>
         </dependency>
 
         <!-- ============================================================
