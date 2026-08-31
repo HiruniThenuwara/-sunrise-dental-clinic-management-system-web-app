@@ -3,68 +3,286 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <%--
-    Day 1 version of the dashboard.
+    Dashboard - Day 2 version.
 
-    The layout, cards and table styles are in place. The statistic values
-    and the recent appointment rows are filled with live database data on
-    Day 2 and Day 3.
+    The layout, statistic cards and tables are complete. The numbers and rows
+    below are hardcoded sample data so the screen can be reviewed and tested
+    before the database is connected. On Day 3 the DashboardServlet replaces
+    every value here with data read through the DAO layer.
 --%>
+
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
 <div class="welcome-card">
     <div>
         <h2>Welcome back, <c:out value="${sessionScope.user.firstName}"/>.</h2>
-        <p>You are signed in as <strong><c:out value="${sessionScope.user.role.displayName}"/></strong>.
-           Use the menu on the left to register an appointment or find a patient record.</p>
+        <p>Here is what is happening at the clinic today. Use the menu on the left
+           to register an appointment or find a patient record.</p>
     </div>
-    <a class="btn btn--primary" href="${pageContext.request.contextPath}/admin/appointments/new">
-        + New Appointment
-    </a>
+    <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
 </div>
 
+<div class="notice">
+    <span class="notice__tag">Sample data</span>
+    <span>These figures are placeholders. They are connected to the database on Day 3.</span>
+</div>
+
+<!-- ================= statistic cards ================= -->
 <section class="stat-grid">
 
     <article class="stat-card">
-        <p class="stat-card__label">Today's Appointments</p>
-        <p class="stat-card__value">--</p>
-        <p class="stat-card__note">Connected on Day 3</p>
-    </article>
-
-    <article class="stat-card">
-        <p class="stat-card__label">Registered Patients</p>
-        <p class="stat-card__value">--</p>
-        <p class="stat-card__note">Connected on Day 3</p>
-    </article>
-
-    <article class="stat-card">
-        <p class="stat-card__label">Dentists On Duty</p>
-        <p class="stat-card__value">--</p>
-        <p class="stat-card__note">Connected on Day 3</p>
-    </article>
-
-    <article class="stat-card">
-        <p class="stat-card__label">Today's Revenue</p>
-        <p class="stat-card__value">--</p>
-        <p class="stat-card__note">Connected on Day 3</p>
-    </article>
-
-</section>
-
-<section class="panel">
-    <header class="panel__head">
-        <h3>Recent Appointments</h3>
-        <span class="badge badge--muted">Day 2</span>
-    </header>
-
-    <div class="panel__body">
-        <div class="empty-state">
-            <p class="empty-state__title">No data connected yet</p>
-            <p class="empty-state__text">
-                The appointment table is built on Day 2 and connected to the
-                database on Day 3. Login, session handling and the protected
-                admin layout are complete.
-            </p>
+        <div class="stat-card__top">
+            <p class="stat-card__label">Today's Appointments</p>
+            <span class="stat-card__icon stat-card__icon--teal">&#9200;</span>
         </div>
-    </div>
+        <p class="stat-card__value">8</p>
+        <p class="stat-card__trend trend--up">3 still waiting &middot; 5 completed</p>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-card__top">
+            <p class="stat-card__label">Registered Patients</p>
+            <span class="stat-card__icon stat-card__icon--blue">&#9787;</span>
+        </div>
+        <p class="stat-card__value">342</p>
+        <p class="stat-card__trend trend--up">+6 registered this week</p>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-card__top">
+            <p class="stat-card__label">Dentists On Duty</p>
+            <span class="stat-card__icon stat-card__icon--violet">&#9877;</span>
+        </div>
+        <p class="stat-card__value">3</p>
+        <p class="stat-card__trend">of 4 registered dentists</p>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-card__top">
+            <p class="stat-card__label">Today's Revenue</p>
+            <span class="stat-card__icon stat-card__icon--amber">&#8377;</span>
+        </div>
+        <p class="stat-card__value">47,500</p>
+        <p class="stat-card__trend">LKR from 5 paid bills</p>
+    </article>
+
 </section>
+
+<!-- ================= main grid ================= -->
+<div class="grid-2">
+
+    <!-- ---------- recent appointments ---------- -->
+    <section class="panel">
+        <header class="panel__head">
+            <h3>Recent Appointments</h3>
+            <a class="link" href="${ctx}/admin/appointments">View all</a>
+        </header>
+
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Appointment No</th>
+                    <th>Patient</th>
+                    <th>Dentist</th>
+                    <th>Treatment</th>
+                    <th>Date &amp; Time</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr>
+                    <td><span class="mono">APT-20260901-001</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <span class="avatar">SK</span>
+                            <div>
+                                <strong>Saman Kumara</strong>
+                                <div class="cell-sub">071 234 5678</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Dr. Anura Jayasinghe</td>
+                    <td>Scaling</td>
+                    <td>01 Sep 2026<div class="cell-sub">09:00 AM</div></td>
+                    <td><span class="badge badge--warning">Booked</span></td>
+                    <td class="text-right"><a class="link" href="${ctx}/admin/appointments">View</a></td>
+                </tr>
+
+                <tr>
+                    <td><span class="mono">APT-20260901-002</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <span class="avatar">DR</span>
+                            <div>
+                                <strong>Dilini Rathnayake</strong>
+                                <div class="cell-sub">072 345 6789</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Dr. Sanduni Fernando</td>
+                    <td>Braces Fitting</td>
+                    <td>01 Sep 2026<div class="cell-sub">10:45 AM</div></td>
+                    <td><span class="badge badge--warning">Booked</span></td>
+                    <td class="text-right"><a class="link" href="${ctx}/admin/appointments">View</a></td>
+                </tr>
+
+                <tr>
+                    <td><span class="mono">APT-20260902-001</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <span class="avatar">RP</span>
+                            <div>
+                                <strong>Ruwan Perera</strong>
+                                <div class="cell-sub">076 123 4567</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Dr. Kasun Silva</td>
+                    <td>Tooth Extraction</td>
+                    <td>02 Sep 2026<div class="cell-sub">08:00 AM</div></td>
+                    <td><span class="badge badge--success">Completed</span></td>
+                    <td class="text-right"><a class="link" href="${ctx}/admin/billing">Bill</a></td>
+                </tr>
+
+                <tr>
+                    <td><span class="mono">APT-20260902-002</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <span class="avatar">NW</span>
+                            <div>
+                                <strong>Nadeesha Wijeratne</strong>
+                                <div class="cell-sub">077 987 6543</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Dr. Anura Jayasinghe</td>
+                    <td>Filling</td>
+                    <td>02 Sep 2026<div class="cell-sub">11:30 AM</div></td>
+                    <td><span class="badge badge--success">Completed</span></td>
+                    <td class="text-right"><a class="link" href="${ctx}/admin/billing">Bill</a></td>
+                </tr>
+
+                <tr>
+                    <td><span class="mono">APT-20260903-001</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <span class="avatar">MB</span>
+                            <div>
+                                <strong>Malith Bandara</strong>
+                                <div class="cell-sub">070 555 1212</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Dr. Malsha Weerasinghe</td>
+                    <td>Consultation</td>
+                    <td>03 Sep 2026<div class="cell-sub">02:30 PM</div></td>
+                    <td><span class="badge badge--danger">Cancelled</span></td>
+                    <td class="text-right"><a class="link" href="${ctx}/admin/appointments">View</a></td>
+                </tr>
+
+                <tr>
+                    <td><span class="mono">APT-20260903-002</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <span class="avatar">IS</span>
+                            <div>
+                                <strong>Ishara Senanayake</strong>
+                                <div class="cell-sub">075 444 8899</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Dr. Kasun Silva</td>
+                    <td>Root Canal</td>
+                    <td>03 Sep 2026<div class="cell-sub">09:00 AM</div></td>
+                    <td><span class="badge badge--warning">Booked</span></td>
+                    <td class="text-right"><a class="link" href="${ctx}/admin/appointments">View</a></td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ---------- side column ---------- -->
+    <div class="side-column">
+
+        <section class="panel">
+            <header class="panel__head">
+                <h3>Today's Schedule</h3>
+                <span class="badge badge--muted">Dr. Anura</span>
+            </header>
+            <div class="panel__body">
+                <ul class="slot-list">
+                    <li class="slot slot--done">
+                        <span class="slot__time">09:00</span>
+                        <span class="slot__text"><strong>Saman Kumara</strong><br><small>Scaling</small></span>
+                    </li>
+                    <li class="slot slot--done">
+                        <span class="slot__time">09:30</span>
+                        <span class="slot__text"><strong>Kavindu Alwis</strong><br><small>Consultation</small></span>
+                    </li>
+                    <li class="slot slot--now">
+                        <span class="slot__time">10:00</span>
+                        <span class="slot__text"><strong>Hasini Gamage</strong><br><small>Filling &middot; in progress</small></span>
+                    </li>
+                    <li class="slot slot--free">
+                        <span class="slot__time">10:30</span>
+                        <span class="slot__text">Available</span>
+                    </li>
+                    <li class="slot">
+                        <span class="slot__time">11:00</span>
+                        <span class="slot__text"><strong>Ruwan Perera</strong><br><small>X-Ray</small></span>
+                    </li>
+                    <li class="slot slot--free">
+                        <span class="slot__time">11:30</span>
+                        <span class="slot__text">Available</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="panel">
+            <header class="panel__head">
+                <h3>Quick Actions</h3>
+            </header>
+            <div class="panel__body">
+                <div class="quick-actions">
+                    <a class="quick-action" href="${ctx}/admin/appointments/new">
+                        <span class="quick-action__icon">&#43;</span>
+                        <span>
+                            <strong>Register Appointment</strong>
+                            <small>Add a new patient visit</small>
+                        </span>
+                    </a>
+                    <a class="quick-action" href="${ctx}/admin/appointments">
+                        <span class="quick-action__icon">&#128269;</span>
+                        <span>
+                            <strong>Find Appointment</strong>
+                            <small>Search by appointment number</small>
+                        </span>
+                    </a>
+                    <a class="quick-action" href="${ctx}/admin/billing">
+                        <span class="quick-action__icon">&#8377;</span>
+                        <span>
+                            <strong>Print a Bill</strong>
+                            <small>Calculate and print a receipt</small>
+                        </span>
+                    </a>
+                    <a class="quick-action" href="${ctx}/admin/help">
+                        <span class="quick-action__icon">?</span>
+                        <span>
+                            <strong>Help Guide</strong>
+                            <small>Step by step instructions</small>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
