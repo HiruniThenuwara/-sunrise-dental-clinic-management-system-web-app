@@ -1,20 +1,23 @@
 /* =====================================================================
-   Sunrise Dental Clinic - Login screen
-   The card sits in the centre of the screen, both across and down.
+   Sunrise Dental Clinic - Staff login
+   Clean medical style: light background, white card centred on screen.
    ===================================================================== */
 
 :root {
-    --navy-900: #0b1f3a;
-    --navy-800: #12305a;
-    --teal-500: #14b8a6;
+    --teal-700: #0f766e;
     --teal-600: #0d9488;
-    --teal-050: #ecfdf9;
+    --teal-500: #14b8a6;
+    --teal-100: #ccfbf1;
+    --teal-050: #f0fdfa;
 
-    --ink-900: #0f172a;
-    --ink-600: #475569;
+    --ink-900: #0f2137;
+    --ink-700: #334155;
+    --ink-500: #64748b;
     --ink-400: #94a3b8;
-    --line: #e2e8f0;
+
+    --line: #e3eaf2;
     --surface: #ffffff;
+    --canvas: #eef4f9;
 
     --danger: #dc2626;
     --danger-bg: #fef2f2;
@@ -23,8 +26,9 @@
     --warning: #b45309;
     --warning-bg: #fffbeb;
 
-    --radius: 16px;
-    --shadow-lg: 0 30px 60px -18px rgba(3, 12, 26, .55);
+    --radius: 20px;
+    --shadow-card: 0 24px 60px -22px rgba(15, 33, 55, .22),
+                   0 2px 6px rgba(15, 33, 55, .05);
 }
 
 * {
@@ -36,55 +40,42 @@
 body {
     font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
     color: var(--ink-900);
+    background: var(--canvas);
     -webkit-font-smoothing: antialiased;
 }
 
 /* ---------------------------------------------------------------
-   Full screen background with the card centred inside it
+   Page - card centred across and down the screen
    --------------------------------------------------------------- */
 .login-page {
     position: relative;
     min-height: 100vh;
     display: flex;
-    align-items: center;      /* centre down the page   */
-    justify-content: center;  /* centre across the page */
-    padding: 32px 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
     overflow: hidden;
     background:
-        radial-gradient(900px 460px at 20% 12%, rgba(20, 184, 166, .30), transparent 62%),
-        radial-gradient(760px 420px at 82% 88%, rgba(37, 99, 235, .22), transparent 60%),
-        linear-gradient(150deg, var(--navy-900) 0%, #0a1a30 100%);
+        radial-gradient(680px 380px at 12% 8%, rgba(20, 184, 166, .16), transparent 60%),
+        radial-gradient(720px 420px at 88% 92%, rgba(59, 130, 246, .13), transparent 62%),
+        linear-gradient(180deg, #f7fbfe 0%, var(--canvas) 100%);
 }
 
-/* soft decorative circles behind the card */
-.login-page::before,
-.login-page::after {
+/* faint dot grid, gives the page some texture without noise */
+.login-page::before {
     content: "";
     position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, .04);
+    inset: 0;
+    background-image: radial-gradient(rgba(15, 33, 55, .055) 1px, transparent 1px);
+    background-size: 22px 22px;
     pointer-events: none;
-}
-
-.login-page::before {
-    width: 520px;
-    height: 520px;
-    right: -180px;
-    bottom: -220px;
-}
-
-.login-page::after {
-    width: 300px;
-    height: 300px;
-    left: -120px;
-    top: -110px;
 }
 
 .login-wrap {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 420px;
+    max-width: 460px;
     text-align: center;
 }
 
@@ -95,55 +86,63 @@ body {
     margin-bottom: 26px;
 }
 
-.brand__mark {
-    width: 62px;
-    height: 62px;
+.brand__badge {
+    width: 66px;
+    height: 66px;
     display: grid;
     place-items: center;
     margin: 0 auto 16px;
-    border-radius: 18px;
-    color: var(--teal-500);
-    background: rgba(255, 255, 255, .09);
-    border: 1px solid rgba(255, 255, 255, .16);
+    color: #fff;
+    border-radius: 22px;
+    background: linear-gradient(140deg, var(--teal-500), var(--teal-700));
+    box-shadow: 0 14px 28px -10px rgba(13, 148, 136, .55);
 }
 
 .brand__name {
-    font-size: 30px;
+    font-size: 27px;
     font-weight: 700;
     letter-spacing: -.4px;
-    color: #fff;
+    color: var(--ink-900);
 }
 
 .brand__name span {
-    color: var(--teal-500);
+    color: var(--teal-600);
 }
 
 .brand__tagline {
-    margin-top: 7px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, .62);
+    margin-top: 6px;
+    font-size: 13.5px;
+    color: var(--ink-500);
 }
 
 /* ---------------------------------------------------------------
-   The card itself
+   Card
    --------------------------------------------------------------- */
-.login-card {
-    padding: 34px 32px;
+.card {
+    padding: 38px 38px 30px;
     text-align: left;
     background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-card);
 }
 
-.login-card__head h2 {
-    font-size: 23px;
+.card__head {
+    padding-bottom: 22px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+}
+
+.card__head h2 {
+    font-size: 24px;
     font-weight: 700;
+    letter-spacing: -.3px;
 }
 
-.login-card__head p {
+.card__head p {
     margin-top: 7px;
     font-size: 13.5px;
-    color: var(--ink-600);
+    color: var(--ink-500);
 }
 
 /* ---- alerts ---- */
@@ -154,19 +153,14 @@ body {
     margin-top: 20px;
     padding: 12px 14px;
     font-size: 13.5px;
-    border-radius: 10px;
+    line-height: 1.45;
+    border-radius: 12px;
     border: 1px solid transparent;
 }
 
 .alert__icon {
-    flex: 0 0 20px;
-    height: 20px;
-    display: grid;
-    place-items: center;
-    font-size: 12px;
-    font-weight: 700;
-    border-radius: 50%;
-    color: #fff;
+    flex: 0 0 18px;
+    margin-top: 1px;
 }
 
 .alert--error {
@@ -175,18 +169,10 @@ body {
     border-color: #fecaca;
 }
 
-.alert--error .alert__icon {
-    background: var(--danger);
-}
-
 .alert--success {
     color: var(--success);
     background: var(--success-bg);
     border-color: #a7f3d0;
-}
-
-.alert--success .alert__icon {
-    background: var(--success);
 }
 
 .alert--warning {
@@ -195,77 +181,101 @@ body {
     border-color: #fde68a;
 }
 
-.alert--warning .alert__icon {
-    background: var(--warning);
-}
-
 /* ---- form ---- */
 form {
     margin-top: 24px;
 }
 
 .field {
-    margin-bottom: 17px;
+    margin-bottom: 18px;
 }
 
 .field label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
     font-size: 12.5px;
     font-weight: 600;
-    color: var(--ink-900);
+    letter-spacing: .01em;
+    color: var(--ink-700);
 }
 
-.field input[type="text"],
-.field input[type="password"] {
+/* input with an icon on the left */
+.control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.control__icon {
+    position: absolute;
+    left: 14px;
+    color: var(--ink-400);
+    pointer-events: none;
+    transition: color .15s ease;
+}
+
+.control input {
     width: 100%;
-    padding: 12px 14px;
+    padding: 14px 14px 14px 44px;
     font-size: 14.5px;
     font-family: inherit;
     color: var(--ink-900);
-    background: #fbfdff;
-    border: 1px solid var(--line);
-    border-radius: 10px;
+    background: #f8fbfd;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
     transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
 
-.field input::placeholder {
+.control input::placeholder {
     color: var(--ink-400);
 }
 
-.field input:focus {
+.control input:focus {
     outline: none;
     background: #fff;
     border-color: var(--teal-500);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, .16);
+    box-shadow: 0 0 0 4px rgba(20, 184, 166, .13);
 }
 
-.field__password {
-    position: relative;
+.control input:focus + .reveal,
+.control input:focus ~ .control__icon {
+    color: var(--teal-600);
 }
 
-.toggle-password {
+.control:focus-within .control__icon {
+    color: var(--teal-600);
+}
+
+#password {
+    padding-right: 68px;
+}
+
+.reveal {
     position: absolute;
-    top: 50%;
     right: 10px;
-    transform: translateY(-50%);
-    padding: 5px 9px;
+    padding: 6px 10px;
     font-size: 12px;
     font-weight: 600;
     font-family: inherit;
-    color: var(--teal-600);
+    color: var(--teal-700);
     background: var(--teal-050);
-    border: none;
-    border-radius: 6px;
+    border: 1px solid var(--teal-100);
+    border-radius: 8px;
     cursor: pointer;
+    transition: background .14s ease;
 }
 
-.toggle-password:hover {
-    background: #d7f7ef;
+.reveal:hover {
+    background: var(--teal-100);
 }
 
-.field--inline {
-    margin-bottom: 22px;
+/* ---- remember me row ---- */
+.field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 4px 0 24px;
 }
 
 .checkbox {
@@ -274,67 +284,128 @@ form {
     gap: 9px;
     font-size: 13px;
     font-weight: 500;
-    color: var(--ink-600);
+    color: var(--ink-700);
     cursor: pointer;
 }
 
 .checkbox input {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     accent-color: var(--teal-600);
     cursor: pointer;
 }
 
-.btn-primary {
+.help-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--teal-600);
+    text-decoration: none;
+}
+
+.help-link:hover {
+    text-decoration: underline;
+}
+
+/* ---- submit ---- */
+.btn-signin {
     width: 100%;
-    padding: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 14px;
     font-size: 15px;
     font-weight: 600;
     font-family: inherit;
     color: #fff;
     background: linear-gradient(135deg, var(--teal-600), var(--teal-500));
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: transform .12s ease, box-shadow .15s ease, filter .15s ease;
+    transition: transform .12s ease, box-shadow .16s ease, filter .16s ease;
 }
 
-.btn-primary:hover {
-    filter: brightness(1.04);
-    box-shadow: 0 10px 22px -8px rgba(13, 148, 136, .6);
+.btn-signin:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 14px 26px -10px rgba(13, 148, 136, .65);
 }
 
-.btn-primary:active {
+.btn-signin:hover svg {
+    transform: translateX(2px);
+}
+
+.btn-signin svg {
+    transition: transform .16s ease;
+}
+
+.btn-signin:active {
     transform: translateY(1px);
 }
 
-.login-card__foot {
-    margin-top: 22px;
-    padding-top: 17px;
+/* ---- card footer ---- */
+.card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 26px;
+    padding-top: 18px;
+    font-size: 12px;
+    color: var(--ink-400);
     border-top: 1px solid var(--line);
-    text-align: center;
 }
 
-.login-card__foot p {
+/* ---------------------------------------------------------------
+   Trust row under the card
+   --------------------------------------------------------------- */
+.trust {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    margin-top: 22px;
+    list-style: none;
+}
+
+.trust li {
+    position: relative;
     font-size: 12px;
     color: var(--ink-400);
 }
 
-.page-note {
-    margin-top: 22px;
-    font-size: 12.5px;
-    color: rgba(255, 255, 255, .38);
+.trust li + li::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--ink-400);
+    transform: translateY(-50%);
 }
 
 /* ---------------------------------------------------------------
    Small screens
    --------------------------------------------------------------- */
-@media (max-width: 480px) {
-    .login-card {
-        padding: 26px 20px;
+@media (max-width: 520px) {
+    .card {
+        padding: 28px 22px 24px;
     }
 
     .brand__name {
-        font-size: 26px;
+        font-size: 23px;
+    }
+
+    .brand__badge {
+        width: 58px;
+        height: 58px;
+        border-radius: 19px;
+    }
+
+    .field-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 }
