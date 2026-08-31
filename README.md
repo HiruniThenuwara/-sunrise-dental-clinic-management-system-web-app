@@ -151,6 +151,18 @@ com.sunrise
    http://localhost:8080/sunrise-dental-clinic/login.jsp
    ```
 
+### Alternative: run from the terminal
+
+If you prefer not to use the Eclipse server view, build the WAR and drop it into Tomcat:
+
+```bash
+mvn clean package                 # produces target/sunrise-dental-clinic.war
+copy target\sunrise-dental-clinic.war C:\tomcat9\webapps\
+C:\tomcat9\bin\startup.bat        # start Tomcat  (shutdown.bat to stop)
+```
+
+Then open `http://localhost:8080/sunrise-dental-clinic/`.
+
 ### Default login
 
 | Username | Password | Role |
