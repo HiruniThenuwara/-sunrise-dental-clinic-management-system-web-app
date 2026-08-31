@@ -1,5 +1,6 @@
 /* =====================================================================
    Sunrise Dental Clinic - Login screen
+   The card sits in the centre of the screen, both across and down.
    ===================================================================== */
 
 :root {
@@ -14,7 +15,6 @@
     --ink-400: #94a3b8;
     --line: #e2e8f0;
     --surface: #ffffff;
-    --canvas: #f4f7fb;
 
     --danger: #dc2626;
     --danger-bg: #fef2f2;
@@ -23,8 +23,8 @@
     --warning: #b45309;
     --warning-bg: #fffbeb;
 
-    --radius: 14px;
-    --shadow-lg: 0 24px 48px -12px rgba(11, 31, 58, .18);
+    --radius: 16px;
+    --shadow-lg: 0 30px 60px -18px rgba(3, 12, 26, .55);
 }
 
 * {
@@ -35,150 +35,114 @@
 
 body {
     font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    background: var(--canvas);
     color: var(--ink-900);
     -webkit-font-smoothing: antialiased;
 }
 
-.login-page {
-    display: grid;
-    grid-template-columns: 1.05fr 1fr;
-    min-height: 100vh;
-}
-
 /* ---------------------------------------------------------------
-   Left brand panel
+   Full screen background with the card centred inside it
    --------------------------------------------------------------- */
-.brand-panel {
+.login-page {
     position: relative;
+    min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 48px;
-    color: #fff;
-    background:
-        radial-gradient(1100px 520px at 15% 10%, rgba(20, 184, 166, .32), transparent 60%),
-        linear-gradient(150deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    align-items: center;      /* centre down the page   */
+    justify-content: center;  /* centre across the page */
+    padding: 32px 20px;
     overflow: hidden;
+    background:
+        radial-gradient(900px 460px at 20% 12%, rgba(20, 184, 166, .30), transparent 62%),
+        radial-gradient(760px 420px at 82% 88%, rgba(37, 99, 235, .22), transparent 60%),
+        linear-gradient(150deg, var(--navy-900) 0%, #0a1a30 100%);
 }
 
-/* soft decorative circles */
-.brand-panel::before,
-.brand-panel::after {
+/* soft decorative circles behind the card */
+.login-page::before,
+.login-page::after {
     content: "";
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, .05);
+    background: rgba(255, 255, 255, .04);
+    pointer-events: none;
 }
 
-.brand-panel::before {
-    width: 420px;
-    height: 420px;
-    right: -140px;
-    bottom: -160px;
+.login-page::before {
+    width: 520px;
+    height: 520px;
+    right: -180px;
+    bottom: -220px;
 }
 
-.brand-panel::after {
-    width: 240px;
-    height: 240px;
-    left: -90px;
-    top: -70px;
+.login-page::after {
+    width: 300px;
+    height: 300px;
+    left: -120px;
+    top: -110px;
 }
 
-.brand-panel__content {
+.login-wrap {
     position: relative;
     z-index: 1;
+    width: 100%;
     max-width: 420px;
+    text-align: center;
 }
 
-.brand-mark {
+/* ---------------------------------------------------------------
+   Clinic identity above the card
+   --------------------------------------------------------------- */
+.brand {
+    margin-bottom: 26px;
+}
+
+.brand__mark {
     width: 62px;
     height: 62px;
     display: grid;
     place-items: center;
+    margin: 0 auto 16px;
     border-radius: 18px;
-    margin-bottom: 26px;
     color: var(--teal-500);
-    background: rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .09);
     border: 1px solid rgba(255, 255, 255, .16);
 }
 
-.brand-name {
-    font-size: 38px;
+.brand__name {
+    font-size: 30px;
     font-weight: 700;
-    letter-spacing: -.5px;
+    letter-spacing: -.4px;
+    color: #fff;
 }
 
-.brand-name span {
+.brand__name span {
     color: var(--teal-500);
 }
 
-.brand-tagline {
-    margin-top: 10px;
-    font-size: 16px;
-    color: rgba(255, 255, 255, .74);
-}
-
-.brand-points {
-    list-style: none;
-    margin-top: 34px;
-    display: grid;
-    gap: 14px;
-}
-
-.brand-points li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 15px;
-    color: rgba(255, 255, 255, .88);
-}
-
-.tick {
-    flex: 0 0 26px;
-    height: 26px;
-    display: grid;
-    place-items: center;
-    font-size: 13px;
-    border-radius: 50%;
-    color: var(--teal-500);
-    background: rgba(20, 184, 166, .16);
-}
-
-.brand-footer {
-    margin-top: 46px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, .45);
+.brand__tagline {
+    margin-top: 7px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, .62);
 }
 
 /* ---------------------------------------------------------------
-   Right form panel
+   The card itself
    --------------------------------------------------------------- */
-.form-panel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-}
-
 .login-card {
-    width: 100%;
-    max-width: 400px;
-    padding: 40px 36px;
+    padding: 34px 32px;
+    text-align: left;
     background: var(--surface);
-    border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: var(--shadow-lg);
 }
 
 .login-card__head h2 {
-    font-size: 26px;
+    font-size: 23px;
     font-weight: 700;
 }
 
 .login-card__head p {
-    margin-top: 8px;
-    font-size: 14px;
+    margin-top: 7px;
+    font-size: 13.5px;
     color: var(--ink-600);
 }
 
@@ -187,9 +151,9 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin-top: 22px;
+    margin-top: 20px;
     padding: 12px 14px;
-    font-size: 14px;
+    font-size: 13.5px;
     border-radius: 10px;
     border: 1px solid transparent;
 }
@@ -235,19 +199,19 @@ body {
     background: var(--warning);
 }
 
-/* ---- form fields ---- */
+/* ---- form ---- */
 form {
-    margin-top: 26px;
+    margin-top: 24px;
 }
 
 .field {
-    margin-bottom: 18px;
+    margin-bottom: 17px;
 }
 
 .field label {
     display: block;
     margin-bottom: 7px;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--ink-900);
 }
@@ -256,7 +220,7 @@ form {
 .field input[type="password"] {
     width: 100%;
     padding: 12px 14px;
-    font-size: 15px;
+    font-size: 14.5px;
     font-family: inherit;
     color: var(--ink-900);
     background: #fbfdff;
@@ -301,7 +265,7 @@ form {
 }
 
 .field--inline {
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 .checkbox {
@@ -345,8 +309,8 @@ form {
 }
 
 .login-card__foot {
-    margin-top: 24px;
-    padding-top: 18px;
+    margin-top: 22px;
+    padding-top: 17px;
     border-top: 1px solid var(--line);
     text-align: center;
 }
@@ -356,19 +320,21 @@ form {
     color: var(--ink-400);
 }
 
+.page-note {
+    margin-top: 22px;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .38);
+}
+
 /* ---------------------------------------------------------------
-   Responsive - the brand panel is hidden on small screens
+   Small screens
    --------------------------------------------------------------- */
-@media (max-width: 900px) {
-    .login-page {
-        grid-template-columns: 1fr;
+@media (max-width: 480px) {
+    .login-card {
+        padding: 26px 20px;
     }
 
-    .brand-panel {
-        display: none;
-    }
-
-    .form-panel {
-        min-height: 100vh;
+    .brand__name {
+        font-size: 26px;
     }
 }
