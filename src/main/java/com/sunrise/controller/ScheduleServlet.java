@@ -9,9 +9,6 @@ import java.io.IOException;
 
 /**
  * Doctor working hours and generated time slots.
- *
- * <p>Day 2 version: forwards to the view so the interface can be reviewed
- * and tested. The database work is added on Day 3.</p>
  */
 @WebServlet(name = "ScheduleServlet", urlPatterns = {"/admin/schedule"})
 public class ScheduleServlet extends HttpServlet {

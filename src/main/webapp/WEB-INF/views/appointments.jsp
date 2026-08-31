@@ -20,15 +20,11 @@
     <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>Rows are hardcoded today. The search runs against the database on Day 3.</span>
-</div>
 
 <!-- ================= search by appointment number ================= -->
 <section class="panel search-panel">
     <div class="panel__body">
-        <form class="search-row" onsubmit="showToast('Search is connected on Day 3.', 'info'); return false;">
+        <form class="search-row" onsubmit="showToast('This feature is not available in this version yet.', 'info'); return false;">
             <div class="form-field form-field--grow">
                 <label for="searchNo">Search by Appointment Number</label>
                 <input class="input" type="search" id="searchNo" placeholder="APT-20260901-001">

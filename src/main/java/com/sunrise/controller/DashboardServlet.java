@@ -14,8 +14,6 @@ import java.io.IOException;
  * container never serves directly. A user cannot reach it by typing the
  * path in the address bar - the only way in is through this servlet, and
  * therefore through {@code AuthFilter}.</p>
- *
- * <p>The statistic cards are filled with live data on Day 2 and Day 3.</p>
  */
 @WebServlet(name = "DashboardServlet", urlPatterns = {"/admin/dashboard", "/admin/"})
 public class DashboardServlet extends HttpServlet {

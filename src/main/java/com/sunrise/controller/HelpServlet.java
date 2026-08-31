@@ -9,9 +9,6 @@ import java.io.IOException;
 
 /**
  * Step by step guide for new staff.
- *
- * <p>Day 2 version: forwards to the view so the interface can be reviewed
- * and tested. The database work is added on Day 3.</p>
  */
 @WebServlet(name = "HelpServlet", urlPatterns = {"/admin/help"})
 public class HelpServlet extends HttpServlet {

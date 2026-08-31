@@ -22,10 +22,6 @@
     </div>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>This record is hardcoded. It is loaded by appointment number from the database on Day 3.</span>
-</div>
 
 <div class="status-strip">
     <div class="status-strip__item">
@@ -147,15 +143,15 @@
             <header class="panel__head"><h3>Actions</h3></header>
             <div class="panel__body">
                 <div class="quick-actions">
-                    <a class="quick-action" href="#" onclick="showToast('Editing is connected on Day 3.', 'info'); return false;">
+                    <a class="quick-action" href="#" onclick="showToast('This feature is not available in this version yet.', 'info'); return false;">
                         <span class="quick-action__icon">&#9998;</span>
                         <span><strong>Edit Appointment</strong><small>Change dentist, date or time</small></span>
                     </a>
-                    <a class="quick-action" href="#" onclick="showToast('Status change is connected on Day 3.', 'info'); return false;">
+                    <a class="quick-action" href="#" onclick="showToast('This feature is not available in this version yet.', 'info'); return false;">
                         <span class="quick-action__icon">&#10003;</span>
                         <span><strong>Mark as Completed</strong><small>After the patient is treated</small></span>
                     </a>
-                    <a class="quick-action" href="#" onclick="if (confirm('Cancel this appointment?')) { showToast('Cancellation is connected on Day 3.', 'info'); } return false;">
+                    <a class="quick-action" href="#" onclick="if (confirm('Cancel this appointment?')) { showToast('This feature is not available in this version yet.', 'info'); } return false;">
                         <span class="quick-action__icon">&times;</span>
                         <span><strong>Cancel Appointment</strong><small>Frees the time slot again</small></span>
                     </a>
