@@ -186,12 +186,9 @@ Unit tests use **Mockito** mock DAOs, so no database is required to run them.
 
 ## Project Documentation
 
-| Document | Location |
-|---|---|
-| UML diagrams (use case, class, sequence) | `documentation/uml/` |
-| Test plan, test data and test rationale | `documentation/test-plan.md` |
-| Test result and application screenshots | `documentation/screenshots/` |
-| Requirement traceability matrix | `documentation/traceability-matrix.md` |
+The system design (use case, class and sequence diagrams), the test plan and the
+requirement traceability matrix are provided in the submitted assessment report
+rather than in this repository.
 
 ---
 

@@ -67,10 +67,11 @@ target/surefire-reports/
 target/site/
 *.hprof
 
-# ----- Private working folder (NOT pushed to GitHub) -----
-# Planning notes, drafts, AI assistant files and personal working documents.
-# Files needed for marks (UML, test plan, screenshots) go in documentation/ instead.
+# ----- Private working folders (NOT pushed to GitHub) -----
+# Planning notes, drafts, UML sources, report documents and screenshots.
+# These belong in the submitted report, not in the public repository.
 docs/
+documentation/
 CLAUDE.md
 .claude/
 .cursor/
