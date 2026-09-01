@@ -1709,3 +1709,62 @@ body.modal-open {
         padding: 10px 12px;
     }
 }
+
+/* =====================================================================
+   Page level messages after a save or a failed validation
+   ===================================================================== */
+.alert-bar {
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+}
+
+.alert-bar strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.alert-bar ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.alert-bar li {
+    margin-top: 3px;
+}
+
+.alert-bar--success {
+    color: #065f46;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.alert-bar--error {
+    color: #991b1b;
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+/* a form placed inline with links in a table cell */
+.inline-form {
+    display: inline;
+}
+
+.link--button {
+    padding: 0;
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.nowrap .link + .link,
+.nowrap .link + .inline-form {
+    margin-left: 10px;
+}
