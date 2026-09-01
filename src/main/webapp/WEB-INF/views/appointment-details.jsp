@@ -18,7 +18,7 @@
     </div>
     <div class="page-head__actions">
         <a class="btn btn--ghost" href="${ctx}/admin/appointments">Back to list</a>
-        <a class="btn btn--primary" href="${ctx}/admin/billing">Generate Bill</a>
+        <c:if test="${not sessionScope.user.admin}"><a class="btn btn--primary" href="${ctx}/admin/billing">Generate Bill</a></c:if>
     </div>
 </div>
 
@@ -115,7 +115,7 @@
                     <li><span>Discount</span><strong>LKR 0.00</strong></li>
                     <li class="summary-list__total"><span>Total</span><strong>LKR 6,000.00</strong></li>
                 </ul>
-                <a class="btn btn--primary btn--block" href="${ctx}/admin/billing">Generate Bill</a>
+                <c:if test="${not sessionScope.user.admin}"><a class="btn btn--primary btn--block" href="${ctx}/admin/billing">Generate Bill</a></c:if>
             </div>
         </section>
 

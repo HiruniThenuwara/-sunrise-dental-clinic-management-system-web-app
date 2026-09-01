@@ -11,7 +11,14 @@
         <p>Here is what is happening at the clinic today. Use the menu on the left
            to register an appointment or find a patient record.</p>
     </div>
-    <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
+    <c:choose>
+        <c:when test="${sessionScope.user.admin}">
+            <a class="btn btn--primary" href="${ctx}/admin/reports">View Reports</a>
+        </c:when>
+        <c:otherwise>
+            <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
+        </c:otherwise>
+    </c:choose>
 </div>
 
 
@@ -238,13 +245,18 @@
             </header>
             <div class="panel__body">
                 <div class="quick-actions">
-                    <a class="quick-action" href="${ctx}/admin/appointments/new">
-                        <span class="quick-action__icon">&#43;</span>
-                        <span>
-                            <strong>Register Appointment</strong>
-                            <small>Add a new patient visit</small>
-                        </span>
-                    </a>
+
+                    <%-- Front desk actions, shown to receptionists only. --%>
+                    <c:if test="${not sessionScope.user.admin}">
+                        <a class="quick-action" href="${ctx}/admin/appointments/new">
+                            <span class="quick-action__icon">&#43;</span>
+                            <span>
+                                <strong>Register Appointment</strong>
+                                <small>Add a new patient visit</small>
+                            </span>
+                        </a>
+                    </c:if>
+
                     <a class="quick-action" href="${ctx}/admin/appointments">
                         <span class="quick-action__icon">&#128269;</span>
                         <span>
@@ -252,13 +264,35 @@
                             <small>Search by appointment number</small>
                         </span>
                     </a>
-                    <a class="quick-action" href="${ctx}/admin/billing">
-                        <span class="quick-action__icon">&#8377;</span>
-                        <span>
-                            <strong>Print a Bill</strong>
-                            <small>Calculate and print a receipt</small>
-                        </span>
-                    </a>
+
+                    <c:if test="${not sessionScope.user.admin}">
+                        <a class="quick-action" href="${ctx}/admin/billing">
+                            <span class="quick-action__icon">&#8377;</span>
+                            <span>
+                                <strong>Print a Bill</strong>
+                                <small>Calculate and print a receipt</small>
+                            </span>
+                        </a>
+                    </c:if>
+
+                    <%-- Clinic management actions, shown to administrators only. --%>
+                    <c:if test="${sessionScope.user.admin}">
+                        <a class="quick-action" href="${ctx}/admin/doctors">
+                            <span class="quick-action__icon">&#9877;</span>
+                            <span>
+                                <strong>Manage Dentists</strong>
+                                <small>Add a dentist or change a fee</small>
+                            </span>
+                        </a>
+                        <a class="quick-action" href="${ctx}/admin/reports">
+                            <span class="quick-action__icon">&#9650;</span>
+                            <span>
+                                <strong>View Reports</strong>
+                                <small>Workload and revenue</small>
+                            </span>
+                        </a>
+                    </c:if>
+
                     <a class="quick-action" href="${ctx}/admin/help">
                         <span class="quick-action__icon">?</span>
                         <span>

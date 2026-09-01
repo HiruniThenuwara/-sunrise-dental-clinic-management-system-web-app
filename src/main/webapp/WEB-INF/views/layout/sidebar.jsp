@@ -33,20 +33,28 @@
 
         <p class="nav-group">Appointments</p>
 
-        <a class="nav-link ${activePage eq 'new-appointment' ? 'is-active' : ''}"
-           href="${ctx}/admin/appointments/new">
-            <span class="nav-link__icon">&#43;</span> New Appointment
-        </a>
+        <%-- Front desk work. The administrator manages the clinic and does
+             not take bookings, so this is shown to receptionists only. --%>
+        <c:if test="${not sessionScope.user.admin}">
+            <a class="nav-link ${activePage eq 'new-appointment' ? 'is-active' : ''}"
+               href="${ctx}/admin/appointments/new">
+                <span class="nav-link__icon">&#43;</span> New Appointment
+            </a>
+        </c:if>
 
         <a class="nav-link ${activePage eq 'appointments' ? 'is-active' : ''}"
            href="${ctx}/admin/appointments">
             <span class="nav-link__icon">&#9776;</span> All Appointments
         </a>
 
-        <a class="nav-link ${activePage eq 'schedule' ? 'is-active' : ''}"
-           href="${ctx}/admin/schedule">
-            <span class="nav-link__icon">&#9200;</span> Schedule &amp; Slots
-        </a>
+        <%-- Working hours decide which slots exist, so only an administrator
+             may change them. --%>
+        <c:if test="${sessionScope.user.admin}">
+            <a class="nav-link ${activePage eq 'schedule' ? 'is-active' : ''}"
+               href="${ctx}/admin/schedule">
+                <span class="nav-link__icon">&#9200;</span> Schedule &amp; Slots
+            </a>
+        </c:if>
 
         <p class="nav-group">Clinic</p>
 
@@ -64,10 +72,13 @@
             </a>
         </c:if>
 
-        <a class="nav-link ${activePage eq 'billing' ? 'is-active' : ''}"
-           href="${ctx}/admin/billing">
-            <span class="nav-link__icon">&#8377;</span> Billing
-        </a>
+        <%-- Taking payment is front desk work, so receptionists only. --%>
+        <c:if test="${not sessionScope.user.admin}">
+            <a class="nav-link ${activePage eq 'billing' ? 'is-active' : ''}"
+               href="${ctx}/admin/billing">
+                <span class="nav-link__icon">&#8377;</span> Billing
+            </a>
+        </c:if>
 
         <c:if test="${sessionScope.user.admin}">
             <a class="nav-link ${activePage eq 'reports' ? 'is-active' : ''}"
