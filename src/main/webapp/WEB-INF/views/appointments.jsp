@@ -17,18 +17,17 @@
         <h2 class="page-head__title">All Appointments</h2>
         <p class="page-head__sub">Search by appointment number, or filter by dentist, status and date.</p>
     </div>
-    <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
+    <%-- Booking is front desk work, so the button is for receptionists only. --%>
+    <c:if test="${not sessionScope.user.admin}">
+        <a class="btn btn--primary" href="${ctx}/admin/appointments/new">+ New Appointment</a>
+    </c:if>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>Rows are hardcoded today. The search runs against the database on Day 3.</span>
-</div>
 
 <!-- ================= search by appointment number ================= -->
 <section class="panel search-panel">
     <div class="panel__body">
-        <form class="search-row" onsubmit="showToast('Search is connected on Day 3.', 'info'); return false;">
+        <form class="search-row" onsubmit="showToast('This feature is not available in this version yet.', 'info'); return false;">
             <div class="form-field form-field--grow">
                 <label for="searchNo">Search by Appointment Number</label>
                 <input class="input" type="search" id="searchNo" placeholder="APT-20260901-001">
@@ -130,7 +129,7 @@
                 <td>Tooth Extraction</td>
                 <td>02 Sep 2026<div class="cell-sub">08:00 AM</div></td>
                 <td><span class="badge badge--success">Completed</span></td>
-                <td class="text-right"><a class="link" href="${ctx}/admin/billing">Bill</a></td>
+                <td class="text-right"><c:choose><c:when test="${not sessionScope.user.admin}"><a class="link" href="${ctx}/admin/billing">Bill</a></c:when><c:otherwise><a class="link" href="${ctx}/admin/appointments/view">View</a></c:otherwise></c:choose></td>
             </tr>
 
             <tr>
@@ -145,7 +144,7 @@
                 <td>Filling</td>
                 <td>02 Sep 2026<div class="cell-sub">11:30 AM</div></td>
                 <td><span class="badge badge--success">Completed</span></td>
-                <td class="text-right"><a class="link" href="${ctx}/admin/billing">Bill</a></td>
+                <td class="text-right"><c:choose><c:when test="${not sessionScope.user.admin}"><a class="link" href="${ctx}/admin/billing">Bill</a></c:when><c:otherwise><a class="link" href="${ctx}/admin/appointments/view">View</a></c:otherwise></c:choose></td>
             </tr>
 
             <tr>

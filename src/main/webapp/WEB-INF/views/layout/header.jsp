@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><c:out value="${pageTitle}"/> | Sunrise Dental Clinic</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css?v=2">
 </head>
 <body>
 
@@ -51,9 +51,17 @@
                     </span>
                 </div>
 
-                <a class="btn btn--ghost"
+                <a class="btn btn--logout"
                    href="${pageContext.request.contextPath}/logout"
-                   onclick="return confirm('Sign out of the system?');">Sign Out</a>
+                   onclick="return confirm('Sign out of the system?');">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14.5 16.5v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h6.5a2 2 0 0 1 2 2v2"/>
+                        <path d="M9.5 12h11"/>
+                        <path d="m17 8.5 3.5 3.5-3.5 3.5"/>
+                    </svg>
+                    <span class="btn__text">Sign Out</span>
+                </a>
             </div>
         </header>
 

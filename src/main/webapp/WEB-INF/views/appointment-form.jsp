@@ -21,13 +21,9 @@
     <a class="btn btn--ghost" href="${ctx}/admin/appointments">Back to list</a>
 </div>
 
-<div class="notice">
-    <span class="notice__tag">Sample data</span>
-    <span>Validation runs in the browser today. Server side validation and saving arrive on Day 3.</span>
-</div>
 
 <form class="grid-2" id="appointmentForm"
-      onsubmit="showToast('Saving is connected to the database on Day 3.', 'info'); return false;">
+      onsubmit="showToast('This feature is not available in this version yet.', 'info'); return false;">
 
     <!-- ---------- left: the form ---------- -->
     <div class="side-column">
