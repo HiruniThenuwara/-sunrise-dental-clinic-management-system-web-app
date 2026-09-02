@@ -5,6 +5,7 @@ import com.sunrise.dao.impl.BillDaoImpl;
 import com.sunrise.dao.impl.DoctorDaoImpl;
 import com.sunrise.dao.impl.DoctorScheduleDaoImpl;
 import com.sunrise.dao.impl.PatientDaoImpl;
+import com.sunrise.dao.impl.ReportDaoImpl;
 import com.sunrise.dao.impl.TreatmentDaoImpl;
 import com.sunrise.dao.impl.UserDaoImpl;
 
@@ -36,6 +37,7 @@ public final class DaoFactory {
     private static final AppointmentDao APPOINTMENT_DAO = new AppointmentDaoImpl();
     private static final DoctorScheduleDao SCHEDULE_DAO = new DoctorScheduleDaoImpl();
     private static final BillDao BILL_DAO = new BillDaoImpl();
+    private static final ReportDao REPORT_DAO = new ReportDaoImpl();
 
     /** Utility class, never instantiated. */
     private DaoFactory() {
@@ -75,5 +77,10 @@ public final class DaoFactory {
     /** @return the data access object for bills */
     public static BillDao getBillDao() {
         return BILL_DAO;
+    }
+
+    /** @return the aggregate queries behind the management reports */
+    public static ReportDao getReportDao() {
+        return REPORT_DAO;
     }
 }
