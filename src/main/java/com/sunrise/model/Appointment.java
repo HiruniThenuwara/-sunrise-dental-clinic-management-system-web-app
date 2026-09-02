@@ -150,7 +150,7 @@ public class Appointment implements Serializable {
      * @return consultation fee plus treatment cost, or zero when either is
      *         missing
      */
-    public BigDecimal estimatedTotal() {
+    public BigDecimal getEstimatedTotal() {
         BigDecimal fee = (doctor == null || doctor.getConsultationFee() == null)
                 ? BigDecimal.ZERO : doctor.getConsultationFee();
         BigDecimal cost = (treatment == null || treatment.getBaseCost() == null)

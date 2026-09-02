@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * member is logged back in silently instead of being sent to the login
  * screen.</p>
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/admin/*"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/admin/*", "/api/*"})
 public class AuthFilter implements Filter {
 
     private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
@@ -73,8 +73,20 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // 3. Not logged in - send to the login page and remember where they
-        //    were going, so they land on the right page after logging in.
+        // 3. Not logged in. A web service caller gets a JSON 401 rather than
+        //    the HTML login page, because a redirect to a web page is useless
+        //    to a program and would be parsed as a failed request.
+        if (request.getRequestURI().contains("/api/")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(
+                    "{\"error\":\"Authentication required. Sign in to use this service.\"}");
+            return;
+        }
+
+        //    A browser is sent to the login page, remembering where it was
+        //    going so it lands on the right page afterwards.
         String target = request.getRequestURI();
         if (request.getQueryString() != null) {
             target = target + "?" + request.getQueryString();
