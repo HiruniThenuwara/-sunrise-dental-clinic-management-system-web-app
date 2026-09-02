@@ -55,6 +55,34 @@ public final class DBConnection {
     }
 
     /**
+     * Builds a connection source pointing somewhere other than the clinic
+     * database, without touching {@code db.properties}.
+     *
+     * <p>This exists so the integration tests can run the real DAO code
+     * against an in-memory H2 database. Without it the DAOs could only be
+     * tested against the live MySQL server, which would make the tests slow,
+     * order dependent and impossible to run on a build server.</p>
+     *
+     * <p>The singleton returned by {@link #getInstance()} is untouched, so a
+     * test can never accidentally write to the clinic's data.</p>
+     *
+     * @param url      the JDBC url of the test database
+     * @param username the database user
+     * @param password the database password
+     * @return a connection source for that database
+     */
+    public static DBConnection forTesting(String url, String username, String password) {
+        return new DBConnection(url, username, password);
+    }
+
+    /** Used only by {@link #forTesting}. */
+    private DBConnection(String url, String username, String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
+    /**
      * Returns the single shared instance, creating it on first use.
      * Double checked locking keeps this safe when several requests arrive
      * at the same time.
