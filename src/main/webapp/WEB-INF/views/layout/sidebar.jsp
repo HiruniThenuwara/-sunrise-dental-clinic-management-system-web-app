@@ -72,6 +72,15 @@
             </a>
         </c:if>
 
+        <%-- Staff accounts grant access to patient records, so only an
+             administrator may create or withdraw them. --%>
+        <c:if test="${sessionScope.user.admin}">
+            <a class="nav-link ${activePage eq 'staff' ? 'is-active' : ''}"
+               href="${ctx}/admin/staff">
+                <span class="nav-link__icon">&#9787;</span> Staff Accounts
+            </a>
+        </c:if>
+
         <%-- Taking payment is front desk work, so receptionists only. --%>
         <c:if test="${not sessionScope.user.admin}">
             <a class="nav-link ${activePage eq 'billing' ? 'is-active' : ''}"

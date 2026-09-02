@@ -9,7 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,18 +32,37 @@ public class UserDaoImpl implements UserDao {
 
     private static final Logger LOGGER = Logger.getLogger(UserDaoImpl.class.getName());
 
+    private static final String COLUMNS =
+            "user_id, username, password_hash, salt, full_name, role, "
+            + "is_active, last_login, created_at";
+
     private static final String SELECT_BY_USERNAME =
-            "SELECT user_id, username, password_hash, salt, full_name, role, "
-            + "is_active, last_login, created_at "
-            + "FROM users WHERE username = ?";
+            "SELECT " + COLUMNS + " FROM users WHERE username = ?";
 
     private static final String SELECT_BY_ID =
-            "SELECT user_id, username, password_hash, salt, full_name, role, "
-            + "is_active, last_login, created_at "
-            + "FROM users WHERE user_id = ?";
+            "SELECT " + COLUMNS + " FROM users WHERE user_id = ?";
+
+    private static final String SELECT_ALL =
+            "SELECT " + COLUMNS + " FROM users ORDER BY role, full_name";
 
     private static final String UPDATE_LAST_LOGIN =
             "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?";
+
+    private static final String INSERT =
+            "INSERT INTO users (username, password_hash, salt, full_name, role, is_active) "
+            + "VALUES (?, ?, ?, ?, ?, ?)";
+
+    private static final String UPDATE =
+            "UPDATE users SET full_name = ?, role = ?, is_active = ? WHERE user_id = ?";
+
+    private static final String UPDATE_PASSWORD =
+            "UPDATE users SET password_hash = ?, salt = ? WHERE user_id = ?";
+
+    private static final String SET_ACTIVE =
+            "UPDATE users SET is_active = ? WHERE user_id = ?";
+
+    private static final String USERNAME_EXISTS =
+            "SELECT 1 FROM users WHERE username = ? AND user_id <> ? LIMIT 1";
 
     private final DBConnection dbConnection;
 
@@ -102,6 +124,23 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                users.add(mapRow(resultSet));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read the staff list", e);
+        }
+        return users;
+    }
+
+    @Override
     public boolean updateLastLogin(int userId) {
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_LAST_LOGIN)) {
@@ -112,6 +151,111 @@ public class UserDaoImpl implements UserDao {
         } catch (SQLException e) {
             LOGGER.log(Level.WARNING, "Could not update last login time", e);
             return false;
+        }
+    }
+
+    @Override
+    public User insert(User user) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
+
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPasswordHash());
+            statement.setString(3, user.getSalt());
+            statement.setString(4, user.getFullName());
+            statement.setString(5, user.getRole().name());
+            statement.setBoolean(6, user.isActive());
+
+            statement.executeUpdate();
+
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (keys.next()) {
+                    user.setUserId(keys.getInt(1));
+                }
+            }
+            LOGGER.info("Staff account created: " + user.getUsername());
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not create the staff account", e);
+        }
+        return user;
+    }
+
+    @Override
+    public boolean update(User user) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+
+            statement.setString(1, user.getFullName());
+            statement.setString(2, user.getRole().name());
+            statement.setBoolean(3, user.isActive());
+            statement.setInt(4, user.getUserId());
+
+            return statement.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not update the staff account", e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updatePassword(int userId, String passwordHash, String salt) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_PASSWORD)) {
+
+            statement.setString(1, passwordHash);
+            statement.setString(2, salt);
+            statement.setInt(3, userId);
+
+            boolean changed = statement.executeUpdate() == 1;
+            if (changed) {
+                // The password itself is never logged, only that it changed.
+                LOGGER.info("Password changed for user id " + userId);
+            }
+            return changed;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not change the password", e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean setActive(int userId, boolean active) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SET_ACTIVE)) {
+
+            statement.setBoolean(1, active);
+            statement.setInt(2, userId);
+            return statement.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not change the account status", e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean usernameExists(String username, int excludeUserId) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(USERNAME_EXISTS)) {
+
+            statement.setString(1, username.trim());
+            statement.setInt(2, excludeUserId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            // On error the safe answer is "taken", so a duplicate account is
+            // never created on the strength of a failed check.
+            LOGGER.log(Level.SEVERE, "Could not check the username", e);
+            return true;
         }
     }
 

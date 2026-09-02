@@ -26,6 +26,9 @@ public class ValidationService {
     /** Sri Lankan format: ten digits beginning with zero. */
     private static final Pattern CONTACT_NUMBER = Pattern.compile("^0\\d{9}$");
 
+    /** Letters, digits and underscores only, so a login name is easy to type. */
+    private static final Pattern USERNAME = Pattern.compile("^[A-Za-z0-9_]+$");
+
     private static final Pattern EMAIL =
             Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
@@ -36,6 +39,9 @@ public class ValidationService {
     private static final int NAME_MAX = 100;
     private static final int ADDRESS_MIN = 5;
     private static final int ADDRESS_MAX = 255;
+    private static final int USERNAME_MIN = 3;
+    private static final int USERNAME_MAX = 20;
+    private static final int PASSWORD_MIN = 8;
 
     /** No single visit at this clinic can reasonably cost more than this. */
     private static final BigDecimal AMOUNT_CEILING = new BigDecimal("1000000");
@@ -144,6 +150,54 @@ public class ValidationService {
         return amount != null
                 && amount.compareTo(BigDecimal.ZERO) >= 0
                 && amount.compareTo(AMOUNT_CEILING) <= 0;
+    }
+
+    /**
+     * Checks a login name for a staff account.
+     *
+     * <p>Spaces and punctuation are refused. A login name is typed at the
+     * start of every shift, often quickly, and a name containing a space or
+     * an apostrophe is a standing source of failed logins.</p>
+     *
+     * @param username the chosen login name
+     * @return {@code true} when the name may be used
+     */
+    public boolean isValidUsername(String username) {
+        if (isBlank(username)) {
+            return false;
+        }
+        String trimmed = username.trim();
+        return trimmed.length() >= USERNAME_MIN
+                && trimmed.length() <= USERNAME_MAX
+                && USERNAME.matcher(trimmed).matches();
+    }
+
+    /**
+     * Checks that a password is strong enough to be worth having.
+     *
+     * <p>The rule is deliberately modest: at least eight characters, with at
+     * least one letter and one digit. It rules out the passwords that are
+     * actually chosen at a busy front desk, such as "password" or "12345678",
+     * without pushing staff towards writing a complicated one on a note
+     * stuck to the monitor.</p>
+     *
+     * @param password the password being set
+     * @return {@code true} when the password may be used
+     */
+    public boolean isAcceptablePassword(String password) {
+        if (password == null || password.length() < PASSWORD_MIN) {
+            return false;
+        }
+        boolean hasLetter = false;
+        boolean hasDigit = false;
+        for (char character : password.toCharArray()) {
+            if (Character.isLetter(character)) {
+                hasLetter = true;
+            } else if (Character.isDigit(character)) {
+                hasDigit = true;
+            }
+        }
+        return hasLetter && hasDigit;
     }
 
     /**
