@@ -230,6 +230,65 @@ class ValidationServiceTest {
     }
 
     // =================================================================
+    //  Staff accounts
+    // =================================================================
+    @Nested
+    @DisplayName("Staff account rules")
+    class StaffAccountValidation {
+
+        @ParameterizedTest(name = "TC-21 accepts username \"{0}\"")
+        @ValueSource(strings = {"admin", "nimali", "front_desk", "reception2", "a_b_c"})
+        void acceptsSensibleUsernames(String username) {
+            assertTrue(validationService.isValidUsername(username));
+        }
+
+        @ParameterizedTest(name = "TC-22 rejects username \"{0}\"")
+        @ValueSource(strings = {
+                "ab",                 // too short
+                "a really long username here",
+                "nimali perera",      // spaces would be typed wrongly at login
+                "admin@clinic",
+                "user-name",
+                "'; DROP TABLE users; --"
+        })
+        void rejectsUnsuitableUsernames(String username) {
+            assertFalse(validationService.isValidUsername(username));
+        }
+
+        @ParameterizedTest(name = "TC-23 rejects blank username")
+        @NullAndEmptySource
+        void rejectsBlankUsername(String username) {
+            assertFalse(validationService.isValidUsername(username));
+        }
+
+        @Test
+        @DisplayName("TC-24 a password must be at least eight characters")
+        void requiresAnEightCharacterPassword() {
+            assertAll(
+                    () -> assertFalse(validationService.isAcceptablePassword("short12")),
+                    () -> assertTrue(validationService.isAcceptablePassword("nimali123")),
+                    () -> assertTrue(validationService.isAcceptablePassword("Str0ngPass"))
+            );
+        }
+
+        @Test
+        @DisplayName("TC-25 a password must mix letters and digits")
+        void requiresLettersAndDigits() {
+            assertAll(
+                    () -> assertFalse(validationService.isAcceptablePassword("passwordonly")),
+                    () -> assertFalse(validationService.isAcceptablePassword("123456789")),
+                    () -> assertTrue(validationService.isAcceptablePassword("clinic2026"))
+            );
+        }
+
+        @ParameterizedTest(name = "TC-26 rejects blank password")
+        @NullAndEmptySource
+        void rejectsBlankPassword(String password) {
+            assertFalse(validationService.isAcceptablePassword(password));
+        }
+    }
+
+    // =================================================================
     //  The whole appointment form
     // =================================================================
     @Nested
