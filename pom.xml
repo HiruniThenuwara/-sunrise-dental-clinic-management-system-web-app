@@ -23,8 +23,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- dependency versions kept in one place -->
-        <servlet.api.version>4.0.1</servlet.api.version>
-        <jsp.api.version>2.3.3</jsp.api.version>
+        <servlet.api.version>3.1.0</servlet.api.version>
+        <jsp.api.version>2.3.1</jsp.api.version>
         <jstl.version>1.2</jstl.version>
         <mysql.version>8.0.33</mysql.version>
         <openpdf.version>2.2.2</openpdf.version>

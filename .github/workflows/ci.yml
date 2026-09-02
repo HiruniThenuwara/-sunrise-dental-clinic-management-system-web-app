@@ -1,0 +1,78 @@
+name: Build and Test
+
+# Runs on every push and every pull request, so a change that breaks the
+# clinic system is caught before it reaches the main branch rather than
+# after it has been merged.
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+  workflow_dispatch:        # lets the build be started by hand from GitHub
+
+jobs:
+  build:
+    name: Compile, test and package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven          # keeps the downloaded dependencies between runs
+
+      - name: Compile
+        run: mvn -B clean compile
+
+      # The unit tests use Mockito mocks and the integration tests use an
+      # in-memory H2 database, so no MySQL server is needed here. That is the
+      # whole reason the DAO sits behind an interface.
+      - name: Run all tests
+        run: mvn -B test
+
+      - name: Build the deployable WAR
+        run: mvn -B package -DskipTests
+
+      # Uploaded whether the tests passed or failed, because the report is
+      # most useful precisely when something has broken.
+      - name: Upload the test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-test-reports
+          path: target/surefire-reports/
+          retention-days: 30
+
+      - name: Upload the WAR file
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunrise-dental-clinic-war
+          path: target/*.war
+          retention-days: 30
+
+      - name: Summarise the results
+        if: always()
+        run: |
+          echo "### Test results" >> $GITHUB_STEP_SUMMARY
+          if [ -d target/surefire-reports ]; then
+            total=$(grep -ho 'tests="[0-9]*"' target/surefire-reports/*.xml \
+                    | grep -o '[0-9]*' | paste -sd+ | bc)
+            failures=$(grep -ho 'failures="[0-9]*"' target/surefire-reports/*.xml \
+                    | grep -o '[0-9]*' | paste -sd+ | bc)
+            errors=$(grep -ho 'errors="[0-9]*"' target/surefire-reports/*.xml \
+                    | grep -o '[0-9]*' | paste -sd+ | bc)
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Measure | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+            echo "| Tests run | ${total:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Failures | ${failures:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Errors | ${errors:-0} |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No test reports were produced." >> $GITHUB_STEP_SUMMARY
+          fi
