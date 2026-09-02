@@ -161,16 +161,10 @@ public class TreatmentServlet extends HttpServlet {
                 .max(BigDecimal::compareTo)
                 .orElse(BigDecimal.ZERO);
 
-        int longest = treatments.stream()
-                .mapToInt(Treatment::getEstimatedMinutes)
-                .max()
-                .orElse(0);
-
         request.setAttribute("treatments", treatments);
         request.setAttribute("totalCount", treatments.size());
         request.setAttribute("activeCount", active);
         request.setAttribute("highestCost", new java.text.DecimalFormat("#,##0").format(highest));
-        request.setAttribute("longestMinutes", longest);
         request.setAttribute("activePage", "treatments");
         request.setAttribute("pageTitle", "Treatments Management");
     }

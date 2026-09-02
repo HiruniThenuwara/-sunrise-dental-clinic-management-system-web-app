@@ -36,9 +36,16 @@ public enum AppointmentStatus {
         return this == CANCELLED;
     }
 
-    /** @return {@code true} when a bill may be produced for the visit */
+    /**
+     * A visit is billed after the treatment has been carried out, not when
+     * it is booked. Offering a bill for an appointment that has not happened
+     * yet invites the front desk to charge for work the dentist may still
+     * change, or that the patient may not attend.
+     *
+     * @return {@code true} only once the visit is marked completed
+     */
     public boolean isBillable() {
-        return this == COMPLETED || this == BOOKED;
+        return this == COMPLETED;
     }
 
     public static AppointmentStatus fromString(String value) {

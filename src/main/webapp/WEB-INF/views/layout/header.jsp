@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><c:out value="${pageTitle}"/> | Sunrise Dental Clinic</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css?v=5">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css?v=7">
 </head>
 <body>
 

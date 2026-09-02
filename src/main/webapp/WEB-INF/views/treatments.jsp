@@ -15,7 +15,7 @@
 <div class="page-head">
     <div>
         <h2 class="page-head__title">Treatments Management</h2>
-        <p class="page-head__sub">Treatment types offered by the clinic, their duration and cost.</p>
+        <p class="page-head__sub">Treatment types offered by the clinic and what they cost.</p>
     </div>
     <button class="btn btn--primary" type="button" onclick="openTreatmentModal()">+ Add Treatment</button>
 </div>
@@ -63,14 +63,6 @@
         <p class="stat-card__trend">LKR</p>
     </article>
 
-    <article class="stat-card">
-        <div class="stat-card__top">
-            <p class="stat-card__label">Longest Treatment</p>
-            <span class="stat-card__icon stat-card__icon--blue">&#9200;</span>
-        </div>
-        <p class="stat-card__value">${longestMinutes}</p>
-        <p class="stat-card__trend">minutes</p>
-    </article>
 </section>
 
 <section class="panel">
@@ -88,7 +80,6 @@
             <tr>
                 <th>Treatment</th>
                 <th>Description</th>
-                <th class="text-right">Duration</th>
                 <th class="text-right">Cost (LKR)</th>
                 <th>Status</th>
                 <th></th>
@@ -102,7 +93,6 @@
                     <td class="cell-sub">
                         <c:out value="${empty treatment.description ? '-' : treatment.description}"/>
                     </td>
-                    <td class="text-right">${treatment.estimatedMinutes} min</td>
                     <td class="text-right mono">${treatment.baseCost}</td>
                     <td>
                         <c:choose>
@@ -136,7 +126,7 @@
 
             <c:if test="${empty treatments}">
                 <tr>
-                    <td colspan="6">
+                    <td colspan="5">
                         <div class="empty-state">
                             <p class="empty-state__title">No treatments yet</p>
                             <p class="empty-state__text">
@@ -189,25 +179,20 @@
                           placeholder="Short description shown to the receptionist"><c:out value="${formDescription}"/></textarea>
             </div>
 
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="trCost">Base Cost (LKR) <span class="required">*</span></label>
-                    <input class="input" type="number" id="trCost" name="baseCost"
-                           value="<c:out value='${formCost}'/>"
-                           min="0" step="100" placeholder="25000" required>
-                    <p class="hint">The dentist's consultation fee is added on top of this.</p>
-                </div>
-                <div class="form-field">
-                    <label for="trMinutes">Duration (minutes) <span class="required">*</span></label>
-                    <select class="input" id="trMinutes" name="estimatedMinutes" required>
-                        <option value="15">15 minutes</option>
-                        <option value="30" selected>30 minutes</option>
-                        <option value="45">45 minutes</option>
-                        <option value="60">60 minutes</option>
-                        <option value="90">90 minutes</option>
-                        <option value="120">120 minutes</option>
-                    </select>
-                </div>
+            <%-- The duration is no longer shown on this screen, but the
+                 column is still stored and still used elsewhere: the
+                 appointment form shows it beside the treatment name so the
+                 receptionist knows how long the visit takes. Editing a
+                 treatment here therefore keeps its existing duration rather
+                 than silently resetting it. --%>
+            <input type="hidden" name="estimatedMinutes" id="trMinutes" value="30">
+
+            <div class="form-field">
+                <label for="trCost">Base Cost (LKR) <span class="required">*</span></label>
+                <input class="input" type="number" id="trCost" name="baseCost"
+                       value="<c:out value='${formCost}'/>"
+                       min="0" step="100" placeholder="25000" required>
+                <p class="hint">The dentist's consultation fee is added on top of this.</p>
             </div>
 
             <div class="form-field">

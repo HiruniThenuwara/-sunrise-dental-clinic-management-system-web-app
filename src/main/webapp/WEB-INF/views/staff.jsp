@@ -15,7 +15,7 @@
 <div class="page-head">
     <div>
         <h2 class="page-head__title">Staff Management</h2>
-        <p class="page-head__sub">Create and withdraw the accounts that can sign in to the system.</p>
+        <p class="page-head__sub">Create, activate and deactivate the accounts that can sign in to the system.</p>
     </div>
     <button class="btn btn--primary" type="button" onclick="openCreateStaff()">+ Add Staff Member</button>
 </div>
@@ -65,7 +65,7 @@
 
     <article class="stat-card">
         <div class="stat-card__top">
-            <p class="stat-card__label">Withdrawn</p>
+            <p class="stat-card__label">Deactivated</p>
             <span class="stat-card__icon stat-card__icon--amber">&times;</span>
         </div>
         <p class="stat-card__value">${totalCount - activeCount}</p>
@@ -125,7 +125,7 @@
                                 <span class="badge badge--success">Active</span>
                             </c:when>
                             <c:otherwise>
-                                <span class="badge badge--danger">Withdrawn</span>
+                                <span class="badge badge--danger">Inactive</span>
                             </c:otherwise>
                         </c:choose>
                     </td>
@@ -142,12 +142,14 @@
 
                         <c:if test="${member.userId ne sessionScope.user.userId}">
                             <form method="post" action="${ctx}/admin/staff" class="inline-form"
-                                  onsubmit="return confirm('Change whether this staff member can sign in?');">
+                                  onsubmit="return confirm('${member.active
+                                          ? "Deactivate"
+                                          : "Activate"} the account for ${member.fullName}?');">
                                 <input type="hidden" name="action" value="toggle">
                                 <input type="hidden" name="userId" value="${member.userId}">
                                 <input type="hidden" name="active" value="${member.active ? 0 : 1}">
                                 <button type="submit" class="link link--button">
-                                    <c:out value="${member.active ? 'Withdraw' : 'Restore'}"/>
+                                    <c:out value="${member.active ? 'Deactivate' : 'Activate'}"/>
                                 </button>
                             </form>
                         </c:if>
@@ -161,7 +163,7 @@
 
     <footer class="panel__foot">
         <p class="hint">
-            An account is never deleted. Withdrawing it stops the person signing in
+            An account is never deleted. Deactivating it stops the person signing in
             while keeping their name on the appointments they registered and the
             bills they took payment for.
         </p>
@@ -225,7 +227,7 @@
                     <label for="staffStatus">Status</label>
                     <select class="input" id="staffStatus" name="status">
                         <option value="1">Active - can sign in</option>
-                        <option value="0">Withdrawn - cannot sign in</option>
+                        <option value="0">Inactive - cannot sign in</option>
                     </select>
                 </div>
             </div>

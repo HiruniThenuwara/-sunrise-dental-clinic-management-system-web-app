@@ -121,8 +121,8 @@ public class StaffServlet extends HttpServlet {
 
         return switch (action == null ? "" : action) {
             case "toggle" -> result.getUser().isActive()
-                    ? name + " can sign in again."
-                    : name + " can no longer sign in.";
+                    ? name + " was activated and can sign in again."
+                    : name + " was deactivated and can no longer sign in.";
             case "password" -> "The password for " + name + " has been changed.";
             case "edit" -> name + " was updated.";
             default -> name + " was added as a "

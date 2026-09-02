@@ -109,6 +109,25 @@
                             <a class="link"
                                href="${ctx}/admin/billing?no=${appointment.appointmentNo}">Bill</a>
                         </c:if>
+
+                        <%-- Cancel is offered only while the visit is still
+                             booked and the date has not passed, which is what
+                             Appointment.isCancellable() decides. Cancelling
+                             frees the time slot for another patient. --%>
+                        <c:if test="${appointment.cancellable}">
+                            <form method="post" action="${ctx}/admin/appointments/status"
+                                  class="inline-form"
+                                  onsubmit="return confirm('Cancel appointment ${appointment.appointmentNo} for ${appointment.patient.patientName}?\n\nThe time slot becomes free for another patient.');">
+                                <input type="hidden" name="appointmentId"
+                                       value="${appointment.appointmentId}">
+                                <input type="hidden" name="no" value="${appointment.appointmentNo}">
+                                <input type="hidden" name="status" value="CANCELLED">
+                                <input type="hidden" name="returnTo" value="list">
+                                <button type="submit" class="link link--button link--danger">
+                                    Cancel
+                                </button>
+                            </form>
+                        </c:if>
                     </td>
                 </tr>
             </c:forEach>

@@ -1935,3 +1935,95 @@ body.modal-open {
     align-items: center;
     justify-content: center;
 }
+
+/* a destructive action shown as a link inside a table row */
+.link--danger {
+    color: var(--danger);
+}
+
+.link--danger:hover {
+    color: #b91c1c;
+    text-decoration: underline;
+}
+
+/* =====================================================================
+   Returning patient lookup on the appointment form
+   ===================================================================== */
+.patient-lookup {
+    position: relative;
+}
+
+.lookup-results {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 18px 36px -14px rgba(11, 31, 58, .35);
+}
+
+.lookup-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    padding: 10px 14px;
+    text-align: left;
+    font-family: inherit;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background .12s ease;
+}
+
+.lookup-row:last-child {
+    border-bottom: none;
+}
+
+.lookup-row:hover,
+.lookup-row:focus {
+    background: var(--teal-050);
+    outline: none;
+}
+
+.lookup-row strong {
+    font-size: 14px;
+    color: var(--ink-900);
+}
+
+.lookup-row small {
+    font-size: 12px;
+    color: var(--ink-400);
+}
+
+.lookup-empty {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink-400);
+}
+
+/* the banner shown once a record has been picked */
+.chosen-patient {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    color: #065f46;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+}
+
+.chosen-patient small {
+    color: #047857;
+}

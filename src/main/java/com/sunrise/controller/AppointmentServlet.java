@@ -259,12 +259,23 @@ public class AppointmentServlet extends HttpServlet {
                     "Status changed to " + status.getDisplayName());
 
             request.getSession().setAttribute("flashSuccess",
-                    "The appointment is now marked as " + status.getDisplayName().toLowerCase() + ".");
+                    status == AppointmentStatus.CANCELLED
+                            ? "Appointment " + number + " was cancelled. "
+                              + "The time slot is free for another patient."
+                            : "Appointment " + number + " is now marked as "
+                              + status.getDisplayName().toLowerCase() + ".");
         } else {
             request.getSession().setAttribute("flashError",
                     "The status could not be changed. Please try again.");
         }
-        response.sendRedirect(request.getContextPath() + "/admin/appointments/view?no=" + number);
+
+        // Go back to wherever the staff member was. Cancelling from the list
+        // returns to the list; cancelling from the details page stays there.
+        String returnTo = request.getParameter("returnTo");
+
+        response.sendRedirect("list".equals(returnTo)
+                ? request.getContextPath() + "/admin/appointments"
+                : request.getContextPath() + "/admin/appointments/view?no=" + number);
     }
 
     // -----------------------------------------------------------------
