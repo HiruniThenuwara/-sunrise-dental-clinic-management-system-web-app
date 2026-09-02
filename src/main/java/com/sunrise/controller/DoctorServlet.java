@@ -76,6 +76,14 @@ public class DoctorServlet extends HttpServlet {
                 !"0".equals(request.getParameter("status")));
 
         if (result.isSuccess()) {
+            new com.sunrise.service.ActivityLogService().record(request,
+                    result.isNewRecord()
+                            ? com.sunrise.model.ActivityAction.DOCTOR_CREATED
+                            : com.sunrise.model.ActivityAction.DOCTOR_UPDATED,
+                    "Dentist", result.getDoctor().getDoctorName(),
+                    result.getSuccessMessage() + " Consultation fee LKR "
+                            + result.getDoctor().getFormattedFee());
+
             // Redirect after post, so a browser refresh cannot save twice.
             request.getSession().setAttribute("flashSuccess", result.getSuccessMessage());
             response.sendRedirect(request.getContextPath() + "/admin/doctors");

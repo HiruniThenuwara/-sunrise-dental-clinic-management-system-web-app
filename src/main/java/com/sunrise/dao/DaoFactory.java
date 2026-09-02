@@ -1,5 +1,6 @@
 package com.sunrise.dao;
 
+import com.sunrise.dao.impl.ActivityLogDaoImpl;
 import com.sunrise.dao.impl.AppointmentDaoImpl;
 import com.sunrise.dao.impl.BillDaoImpl;
 import com.sunrise.dao.impl.DoctorDaoImpl;
@@ -38,6 +39,7 @@ public final class DaoFactory {
     private static final DoctorScheduleDao SCHEDULE_DAO = new DoctorScheduleDaoImpl();
     private static final BillDao BILL_DAO = new BillDaoImpl();
     private static final ReportDao REPORT_DAO = new ReportDaoImpl();
+    private static final ActivityLogDao ACTIVITY_LOG_DAO = new ActivityLogDaoImpl();
 
     /** Utility class, never instantiated. */
     private DaoFactory() {
@@ -82,5 +84,10 @@ public final class DaoFactory {
     /** @return the aggregate queries behind the management reports */
     public static ReportDao getReportDao() {
         return REPORT_DAO;
+    }
+
+    /** @return the append only store behind the activity log */
+    public static ActivityLogDao getActivityLogDao() {
+        return ACTIVITY_LOG_DAO;
     }
 }

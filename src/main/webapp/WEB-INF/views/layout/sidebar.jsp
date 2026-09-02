@@ -96,6 +96,15 @@
             </a>
         </c:if>
 
+        <%-- The audit trail. Only an administrator should be able to see
+             who did what, and it must not be editable from the interface. --%>
+        <c:if test="${sessionScope.user.admin}">
+            <a class="nav-link ${activePage eq 'activity' ? 'is-active' : ''}"
+               href="${ctx}/admin/activity">
+                <span class="nav-link__icon">&#9998;</span> Activity Log
+            </a>
+        </c:if>
+
         <p class="nav-group">Support</p>
 
         <a class="nav-link ${activePage eq 'help' ? 'is-active' : ''}"

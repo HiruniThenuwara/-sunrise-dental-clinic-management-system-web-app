@@ -91,6 +91,18 @@ public class StaffServlet extends HttpServlet {
         }
 
         if (result.isSuccess()) {
+            // Anything that changes who can reach patient records is
+            // recorded, with the name of the administrator who did it.
+            new com.sunrise.service.ActivityLogService().record(request,
+                    switch (action == null ? "" : action) {
+                        case "toggle" -> com.sunrise.model.ActivityAction.STAFF_STATUS;
+                        case "password" -> com.sunrise.model.ActivityAction.STAFF_PASSWORD_RESET;
+                        case "edit" -> com.sunrise.model.ActivityAction.STAFF_UPDATED;
+                        default -> com.sunrise.model.ActivityAction.STAFF_CREATED;
+                    },
+                    "Staff account", result.getUser().getUsername(),
+                    successMessage(action, result));
+
             request.getSession().setAttribute("flashSuccess", successMessage(action, result));
             // Redirect after post, so a refresh cannot create the account twice.
             response.sendRedirect(request.getContextPath() + "/admin/staff");

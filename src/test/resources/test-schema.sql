@@ -114,3 +114,17 @@ CREATE TABLE bills (
         REFERENCES appointments(appointment_id) ON DELETE CASCADE,
     CONSTRAINT fk_bill_user FOREIGN KEY (billed_by) REFERENCES users(user_id)
 );
+
+CREATE TABLE activity_log (
+    log_id     INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT          NULL,
+    username   VARCHAR(50)  NULL,
+    action     VARCHAR(40)  NOT NULL,
+    entity     VARCHAR(40)  NULL,
+    entity_ref VARCHAR(50)  NULL,
+    details    VARCHAR(255) NULL,
+    ip_address VARCHAR(45)  NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_activity_user FOREIGN KEY (user_id)
+        REFERENCES users(user_id) ON DELETE SET NULL
+);
