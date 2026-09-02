@@ -3,11 +3,11 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <%--
-    Treatment types and their prices.
+    Treatment types and their prices, read from the treatments table.
 
-    The appointment form reads this list when the receptionist chooses a
+    The appointment form reads the same list when the receptionist chooses a
     treatment, and the billing screen reads the cost from it, so the two
-    screens always agree on the price.
+    screens can never disagree about a price.
 --%>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -17,8 +17,23 @@
         <h2 class="page-head__title">Treatments</h2>
         <p class="page-head__sub">Treatment types offered by the clinic, their duration and cost.</p>
     </div>
-    <button class="btn btn--primary" type="button" onclick="openModal('treatmentModal')">+ Add Treatment</button>
+    <button class="btn btn--primary" type="button" onclick="openTreatmentModal()">+ Add Treatment</button>
 </div>
+
+<c:if test="${not empty flashSuccess}">
+    <div class="alert-bar alert-bar--success"><c:out value="${flashSuccess}"/></div>
+</c:if>
+<c:if test="${not empty flashError}">
+    <div class="alert-bar alert-bar--error"><c:out value="${flashError}"/></div>
+</c:if>
+<c:if test="${not empty errors}">
+    <div class="alert-bar alert-bar--error">
+        <strong>Please correct the following:</strong>
+        <ul>
+            <c:forEach var="error" items="${errors}"><li><c:out value="${error}"/></li></c:forEach>
+        </ul>
+    </div>
+</c:if>
 
 <section class="stat-grid">
     <article class="stat-card">
@@ -26,17 +41,17 @@
             <p class="stat-card__label">Treatment Types</p>
             <span class="stat-card__icon stat-card__icon--teal">&#9873;</span>
         </div>
-        <p class="stat-card__value">10</p>
-        <p class="stat-card__trend">9 active, 1 inactive</p>
+        <p class="stat-card__value">${totalCount}</p>
+        <p class="stat-card__trend">${activeCount} offered for booking</p>
     </article>
 
     <article class="stat-card">
         <div class="stat-card__top">
-            <p class="stat-card__label">Lowest Price</p>
-            <span class="stat-card__icon stat-card__icon--blue">&#8377;</span>
+            <p class="stat-card__label">Inactive</p>
+            <span class="stat-card__icon stat-card__icon--violet">&times;</span>
         </div>
-        <p class="stat-card__value">0</p>
-        <p class="stat-card__trend">Consultation, charged at the dentist fee only</p>
+        <p class="stat-card__value">${totalCount - activeCount}</p>
+        <p class="stat-card__trend">hidden from the appointment form</p>
     </article>
 
     <article class="stat-card">
@@ -44,17 +59,17 @@
             <p class="stat-card__label">Highest Price</p>
             <span class="stat-card__icon stat-card__icon--amber">&#8377;</span>
         </div>
-        <p class="stat-card__value">85,000</p>
-        <p class="stat-card__trend">Braces Fitting</p>
+        <p class="stat-card__value">${highestCost}</p>
+        <p class="stat-card__trend">LKR</p>
     </article>
 
     <article class="stat-card">
         <div class="stat-card__top">
             <p class="stat-card__label">Longest Treatment</p>
-            <span class="stat-card__icon stat-card__icon--violet">&#9200;</span>
+            <span class="stat-card__icon stat-card__icon--blue">&#9200;</span>
         </div>
-        <p class="stat-card__value">120</p>
-        <p class="stat-card__trend">minutes, Braces Fitting</p>
+        <p class="stat-card__value">${longestMinutes}</p>
+        <p class="stat-card__trend">minutes</p>
     </article>
 </section>
 
@@ -62,17 +77,13 @@
     <header class="panel__head">
         <h3>Treatment List</h3>
         <div class="filters">
-            <input type="search" class="input input--search" placeholder="Search treatment name">
-            <select class="input">
-                <option>All statuses</option>
-                <option>Active only</option>
-                <option>Inactive only</option>
-            </select>
+            <input type="search" class="input input--search" id="treatmentSearch"
+                   placeholder="Search treatment name" onkeyup="filterTreatments()">
         </div>
     </header>
 
     <div class="table-wrap">
-        <table class="table">
+        <table class="table" id="treatmentTable">
             <thead>
             <tr>
                 <th>Treatment</th>
@@ -85,95 +96,57 @@
             </thead>
             <tbody>
 
-            <tr>
-                <td><strong>Consultation</strong></td>
-                <td class="cell-sub">General dental check-up and advice</td>
-                <td class="text-right">15 min</td>
-                <td class="text-right mono">0.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
+            <c:forEach var="treatment" items="${treatments}">
+                <tr>
+                    <td><strong><c:out value="${treatment.treatmentName}"/></strong></td>
+                    <td class="cell-sub">
+                        <c:out value="${empty treatment.description ? '-' : treatment.description}"/>
+                    </td>
+                    <td class="text-right">${treatment.estimatedMinutes} min</td>
+                    <td class="text-right mono">${treatment.baseCost}</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${treatment.active}">
+                                <span class="badge badge--success">Active</span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="badge badge--muted">Inactive</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td class="text-right nowrap">
+                        <a class="link" href="#"
+                           onclick="editTreatment(${treatment.treatmentId},
+                                   '<c:out value="${treatment.treatmentName}"/>',
+                                   '<c:out value="${treatment.description}"/>',
+                                   '${treatment.baseCost}',
+                                   ${treatment.estimatedMinutes},
+                                   ${treatment.active}); return false;">Edit</a>
+                        <form method="post" action="${ctx}/admin/treatments" class="inline-form">
+                            <input type="hidden" name="action" value="toggle">
+                            <input type="hidden" name="treatmentId" value="${treatment.treatmentId}">
+                            <input type="hidden" name="active" value="${treatment.active ? 0 : 1}">
+                            <button type="submit" class="link link--button">
+                                <c:out value="${treatment.active ? 'Deactivate' : 'Activate'}"/>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
 
-            <tr>
-                <td><strong>X-Ray</strong></td>
-                <td class="cell-sub">Dental radiograph</td>
-                <td class="text-right">15 min</td>
-                <td class="text-right mono">2,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Scaling</strong></td>
-                <td class="cell-sub">Professional teeth cleaning and polishing</td>
-                <td class="text-right">45 min</td>
-                <td class="text-right mono">4,500.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Tooth Extraction</strong></td>
-                <td class="cell-sub">Simple or surgical tooth removal</td>
-                <td class="text-right">30 min</td>
-                <td class="text-right mono">5,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Filling</strong></td>
-                <td class="cell-sub">Composite or amalgam cavity filling</td>
-                <td class="text-right">45 min</td>
-                <td class="text-right mono">6,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Teeth Whitening</strong></td>
-                <td class="cell-sub">Cosmetic bleaching treatment</td>
-                <td class="text-right">60 min</td>
-                <td class="text-right mono">15,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Root Canal</strong></td>
-                <td class="cell-sub">Root canal treatment (endodontic)</td>
-                <td class="text-right">90 min</td>
-                <td class="text-right mono">25,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Crown Fitting</strong></td>
-                <td class="cell-sub">Porcelain or metal crown placement</td>
-                <td class="text-right">60 min</td>
-                <td class="text-right mono">35,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Denture Fitting</strong></td>
-                <td class="cell-sub">Partial or complete denture fitting</td>
-                <td class="text-right">60 min</td>
-                <td class="text-right mono">45,000.00</td>
-                <td><span class="badge badge--muted">Inactive</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
-
-            <tr>
-                <td><strong>Braces Fitting</strong></td>
-                <td class="cell-sub">Orthodontic braces installation</td>
-                <td class="text-right">120 min</td>
-                <td class="text-right mono">85,000.00</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td class="text-right"><a class="link" href="#" onclick="openModal('treatmentModal'); return false;">Edit</a></td>
-            </tr>
+            <c:if test="${empty treatments}">
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <p class="empty-state__title">No treatments yet</p>
+                            <p class="empty-state__text">
+                                Add the treatments the clinic offers so they can be chosen
+                                on the appointment form.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            </c:if>
 
             </tbody>
         </table>
@@ -188,7 +161,7 @@
     </footer>
 </section>
 
-<!-- ================= add / edit treatment modal ================= -->
+<%-- ================= add / edit treatment modal ================= --%>
 <div class="modal" id="treatmentModal" aria-hidden="true">
     <div class="modal__backdrop" onclick="closeModal('treatmentModal')"></div>
 
@@ -198,31 +171,35 @@
             <button class="modal__close" type="button" onclick="closeModal('treatmentModal')" aria-label="Close">&times;</button>
         </header>
 
-        <form class="modal__body"
-              onsubmit="showToast('This feature is not available in this version yet.', 'info'); return false;">
+        <form class="modal__body" method="post" action="${ctx}/admin/treatments">
+            <input type="hidden" name="treatmentId" id="trId" value="${formTreatmentId}">
 
             <div class="form-field">
                 <label for="trName">Treatment Name <span class="required">*</span></label>
-                <input class="input" type="text" id="trName" placeholder="Root Canal"
-                       minlength="3" maxlength="100" required>
+                <input class="input" type="text" id="trName" name="treatmentName"
+                       value="<c:out value='${formName}'/>"
+                       placeholder="Root Canal" minlength="3" maxlength="100" required>
                 <p class="hint">Each treatment name must be unique.</p>
             </div>
 
             <div class="form-field">
                 <label for="trDescription">Description</label>
-                <textarea class="input" id="trDescription" rows="2"
-                          maxlength="255" placeholder="Short description shown to the receptionist"></textarea>
+                <textarea class="input" id="trDescription" name="description" rows="2"
+                          maxlength="255"
+                          placeholder="Short description shown to the receptionist"><c:out value="${formDescription}"/></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-field">
                     <label for="trCost">Base Cost (LKR) <span class="required">*</span></label>
-                    <input class="input" type="number" id="trCost" min="0" step="100" placeholder="25000" required>
-                    <p class="hint">The dentist consultation fee is added on top of this.</p>
+                    <input class="input" type="number" id="trCost" name="baseCost"
+                           value="<c:out value='${formCost}'/>"
+                           min="0" step="100" placeholder="25000" required>
+                    <p class="hint">The dentist's consultation fee is added on top of this.</p>
                 </div>
                 <div class="form-field">
                     <label for="trMinutes">Duration (minutes) <span class="required">*</span></label>
-                    <select class="input" id="trMinutes" required>
+                    <select class="input" id="trMinutes" name="estimatedMinutes" required>
                         <option value="15">15 minutes</option>
                         <option value="30" selected>30 minutes</option>
                         <option value="45">45 minutes</option>
@@ -230,13 +207,12 @@
                         <option value="90">90 minutes</option>
                         <option value="120">120 minutes</option>
                     </select>
-                    <p class="hint">Used to work out how many time slots the visit needs.</p>
                 </div>
             </div>
 
             <div class="form-field">
                 <label for="trStatus">Status</label>
-                <select class="input" id="trStatus">
+                <select class="input" id="trStatus" name="status">
                     <option value="1">Active - can be chosen for new appointments</option>
                     <option value="0">Inactive - hidden from the appointment form</option>
                 </select>
@@ -251,5 +227,39 @@
 </div>
 
 <script src="${ctx}/assets/js/ui.js"></script>
+<script>
+    function openTreatmentModal() {
+        document.getElementById('treatmentModalTitle').textContent = 'Add Treatment';
+        document.getElementById('trId').value = '';
+        document.getElementById('trName').value = '';
+        document.getElementById('trDescription').value = '';
+        document.getElementById('trCost').value = '';
+        document.getElementById('trMinutes').value = '30';
+        document.getElementById('trStatus').value = '1';
+        openModal('treatmentModal');
+    }
+
+    function editTreatment(id, name, description, cost, minutes, active) {
+        document.getElementById('treatmentModalTitle').textContent = 'Edit Treatment';
+        document.getElementById('trId').value = id;
+        document.getElementById('trName').value = name;
+        document.getElementById('trDescription').value = (description === 'null' ? '' : description);
+        document.getElementById('trCost').value = Math.round(Number(cost));
+        document.getElementById('trMinutes').value = minutes;
+        document.getElementById('trStatus').value = active ? '1' : '0';
+        openModal('treatmentModal');
+    }
+
+    function filterTreatments() {
+        var term = document.getElementById('treatmentSearch').value.toLowerCase();
+        document.querySelectorAll('#treatmentTable tbody tr').forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().indexOf(term) > -1 ? '' : 'none';
+        });
+    }
+
+    <c:if test="${not empty errors}">
+    openModal('treatmentModal');
+    </c:if>
+</script>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
