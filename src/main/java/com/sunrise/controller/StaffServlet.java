@@ -160,7 +160,7 @@ public class StaffServlet extends HttpServlet {
         request.setAttribute("activeCount",
                 staff.stream().filter(User::isActive).count());
         request.setAttribute("activePage", "staff");
-        request.setAttribute("pageTitle", "Staff Accounts");
+        request.setAttribute("pageTitle", "Staff Management");
     }
 
     private User currentUser(HttpServletRequest request) {

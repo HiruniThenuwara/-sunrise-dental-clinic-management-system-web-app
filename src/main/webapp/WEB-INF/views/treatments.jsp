@@ -14,7 +14,7 @@
 
 <div class="page-head">
     <div>
-        <h2 class="page-head__title">Treatments</h2>
+        <h2 class="page-head__title">Treatments Management</h2>
         <p class="page-head__sub">Treatment types offered by the clinic, their duration and cost.</p>
     </div>
     <button class="btn btn--primary" type="button" onclick="openTreatmentModal()">+ Add Treatment</button>

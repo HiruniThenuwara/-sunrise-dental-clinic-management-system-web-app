@@ -130,7 +130,7 @@ public class DoctorServlet extends HttpServlet {
         request.setAttribute("highestFeeText",
                 new java.text.DecimalFormat("#,##0").format(highestFee(doctors)));
         request.setAttribute("activePage", "doctors");
-        request.setAttribute("pageTitle", "Dentists");
+        request.setAttribute("pageTitle", "Dentists Management");
     }
 
     /** @return the highest consultation fee, for the statistic card */

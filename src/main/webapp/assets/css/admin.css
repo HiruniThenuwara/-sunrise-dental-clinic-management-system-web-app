@@ -1894,3 +1894,44 @@ body.modal-open {
         display: none;
     }
 }
+
+/* SVG icons in the menu, replacing the old text characters */
+.nav-link__icon {
+    flex: 0 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .8;
+}
+
+.nav-link__icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.nav-link:hover .nav-link__icon,
+.nav-link.is-active .nav-link__icon {
+    opacity: 1;
+}
+
+.nav-link.is-active .nav-link__icon {
+    color: var(--teal-500);
+}
+
+/* SVG icons on the statistic cards and the quick action rows */
+.stat-card__icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.quick-action__icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.stat-card__icon,
+.quick-action__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}

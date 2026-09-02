@@ -14,7 +14,7 @@
 
 <div class="page-head">
     <div>
-        <h2 class="page-head__title">Staff Accounts</h2>
+        <h2 class="page-head__title">Staff Management</h2>
         <p class="page-head__sub">Create and withdraw the accounts that can sign in to the system.</p>
     </div>
     <button class="btn btn--primary" type="button" onclick="openCreateStaff()">+ Add Staff Member</button>

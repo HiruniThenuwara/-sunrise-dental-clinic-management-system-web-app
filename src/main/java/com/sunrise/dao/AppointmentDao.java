@@ -50,6 +50,15 @@ public interface AppointmentDao {
     List<Appointment> findByDate(LocalDate date);
 
     /**
+     * The visit history of one patient, which is what the patient record
+     * screen shows.
+     *
+     * @param patientId the patient
+     * @return their appointments, most recent first
+     */
+    List<Appointment> findByPatient(int patientId);
+
+    /**
      * Used by the slot calculation to mark taken times as unavailable.
      *
      * @return the times a dentist is already booked on that date
