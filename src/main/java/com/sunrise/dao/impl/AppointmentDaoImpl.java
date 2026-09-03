@@ -389,4 +389,60 @@ public class AppointmentDaoImpl implements AppointmentDao {
             LOGGER.log(Level.WARNING, "Could not close the connection", e);
         }
     }
+
+    @Override
+    public List<Appointment> findPage(int offset, int limit) {
+        List<Appointment> appointments = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     SELECT_FULL + "ORDER BY a.appointment_date DESC, "
+                     + "a.appointment_time DESC, a.appointment_id DESC LIMIT ? OFFSET ?")) {
+
+            statement.setInt(1, Math.max(limit, 1));
+            statement.setInt(2, Math.max(offset, 0));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read a page of appointments", e);
+        }
+        return appointments;
+    }
+
+    @Override
+    public int countAll() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT COUNT(*) FROM appointments");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the appointments", e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int countByStatus(AppointmentStatus status) {
+        if (status == null) {
+            return 0;
+        }
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT COUNT(*) FROM appointments WHERE status = ?")) {
+
+            statement.setString(1, status.name());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the " + status + " appointments", e);
+            return 0;
+        }
+    }
 }

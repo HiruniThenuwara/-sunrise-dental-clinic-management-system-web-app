@@ -58,4 +58,16 @@ public interface ActivityLogDao {
      *         dropdown
      */
     List<String> distinctUsernames();
+
+    /**
+     * One page of the log, newest first, with the same filters the screen
+     * offers. The filters belong on the SQL rather than on the page of
+     * results, otherwise page two of a filtered list would be wrong.
+     */
+    List<ActivityLog> searchPage(String username, String action,
+                                 LocalDate from, LocalDate to,
+                                 int offset, int limit);
+
+    /** @return how many entries match those filters, for the page count */
+    int countSearch(String username, String action, LocalDate from, LocalDate to);
 }

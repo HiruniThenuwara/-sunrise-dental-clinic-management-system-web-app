@@ -190,4 +190,76 @@ public class TreatmentDaoImpl implements TreatmentDao {
         treatment.setActive(resultSet.getBoolean("is_active"));
         return treatment;
     }
+
+    @Override
+    public List<Treatment> findPage(int offset, int limit) {
+        List<Treatment> treatments = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(SELECT_ALL + " LIMIT ? OFFSET ?")) {
+
+            statement.setInt(1, Math.max(limit, 1));
+            statement.setInt(2, Math.max(offset, 0));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    treatments.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read a page of treatments", e);
+        }
+        return treatments;
+    }
+
+    @Override
+    public int countAll() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT COUNT(*) FROM treatments");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the treatments", e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int countActive() {
+        return single("SELECT COUNT(*) FROM treatments WHERE is_active = 1",
+                      "Could not count the active treatments");
+    }
+
+    @Override
+    public java.math.BigDecimal highestCost() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT MAX(base_cost) FROM treatments");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                java.math.BigDecimal value = resultSet.getBigDecimal(1);
+                return value == null ? java.math.BigDecimal.ZERO : value;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read the dearest treatment", e);
+        }
+        return java.math.BigDecimal.ZERO;
+    }
+
+    /** Runs a query that returns one whole number. */
+    private int single(String sql, String failureMessage) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, failureMessage, e);
+            return 0;
+        }
+    }
 }

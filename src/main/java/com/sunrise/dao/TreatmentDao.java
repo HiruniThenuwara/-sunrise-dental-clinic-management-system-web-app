@@ -27,4 +27,16 @@ public interface TreatmentDao {
     boolean update(Treatment treatment);
 
     boolean setActive(int treatmentId, boolean active);
+
+    /** One page of treatments, cheapest first. */
+    List<Treatment> findPage(int offset, int limit);
+
+    /** @return how many treatments exist, for the page count */
+    int countAll();
+
+    /** @return how many treatments are still offered */
+    int countActive();
+
+    /** @return the dearest treatment on the price list */
+    java.math.BigDecimal highestCost();
 }

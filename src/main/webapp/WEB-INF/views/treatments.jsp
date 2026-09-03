@@ -75,7 +75,7 @@
     </header>
 
     <div class="table-wrap">
-        <table class="table" id="treatmentTable">
+        <table class="table" id="treatmentTable" data-no-pager>
             <thead>
             <tr>
                 <th>Treatment</th>
@@ -141,6 +141,9 @@
             </tbody>
         </table>
     </div>
+
+    <%-- Page links. The servlet put the page on the request as pageInfo. --%>
+    <jsp:include page="/WEB-INF/views/layout/pager.jsp"/>
 
 </section>
 

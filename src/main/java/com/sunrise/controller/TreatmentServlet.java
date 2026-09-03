@@ -1,5 +1,6 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
 import com.sunrise.dao.DaoFactory;
 import com.sunrise.dao.TreatmentDao;
 import com.sunrise.model.Treatment;
@@ -149,21 +150,18 @@ public class TreatmentServlet extends HttpServlet {
         return errors;
     }
 
-    /** Loads the treatment list and the statistic card values. */
+    /** Loads one page of treatments and the statistic card values. */
     private void putListOnRequest(HttpServletRequest request) {
-        List<Treatment> treatments = treatmentDao.findAll();
 
-        long active = treatments.stream().filter(Treatment::isActive).count();
+        Page<Treatment> page = Page.of(request.getParameter("page"), treatmentDao.countAll(),
+                                       treatmentDao::findPage);
 
-        BigDecimal highest = treatments.stream()
-                .map(Treatment::getBaseCost)
-                .filter(cost -> cost != null)
-                .max(BigDecimal::compareTo)
-                .orElse(BigDecimal.ZERO);
+        BigDecimal highest = treatmentDao.highestCost();
 
-        request.setAttribute("treatments", treatments);
-        request.setAttribute("totalCount", treatments.size());
-        request.setAttribute("activeCount", active);
+        request.setAttribute("treatments", page.getItems());
+        request.setAttribute("pageInfo", page);
+        request.setAttribute("totalCount", page.getTotalItems());
+        request.setAttribute("activeCount", treatmentDao.countActive());
         request.setAttribute("highestCost", new java.text.DecimalFormat("#,##0").format(highest));
         request.setAttribute("activePage", "treatments");
         request.setAttribute("pageTitle", "Treatments Management");

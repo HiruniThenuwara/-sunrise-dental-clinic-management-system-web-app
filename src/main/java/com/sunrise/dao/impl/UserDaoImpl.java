@@ -281,4 +281,73 @@ public class UserDaoImpl implements UserDao {
         }
         return user;
     }
+
+    @Override
+    public List<User> findPage(int offset, int limit) {
+        List<User> users = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(SELECT_ALL + " LIMIT ? OFFSET ?")) {
+
+            statement.setInt(1, Math.max(limit, 1));
+            statement.setInt(2, Math.max(offset, 0));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read a page of staff accounts", e);
+        }
+        return users;
+    }
+
+    @Override
+    public int countAll() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT COUNT(*) FROM users");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the staff accounts", e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int countByRole(com.sunrise.model.Role role) {
+        if (role == null) {
+            return 0;
+        }
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT COUNT(*) FROM users WHERE role = ?")) {
+
+            statement.setString(1, role.name());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the accounts holding " + role, e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int countActive() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT COUNT(*) FROM users WHERE is_active = 1");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the active accounts", e);
+            return 0;
+        }
+    }
 }

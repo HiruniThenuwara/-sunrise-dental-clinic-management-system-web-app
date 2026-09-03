@@ -61,4 +61,13 @@ public interface DoctorDao {
      * @return how many dentists are currently active
      */
     int countActive();
+
+    /** One page of dentists, active ones first. */
+    List<Doctor> findPage(int offset, int limit);
+
+    /** @return how many dentists exist, for the page count */
+    int countAll();
+
+    /** @return the highest consultation fee on file, for the statistic card */
+    java.math.BigDecimal highestFee();
 }

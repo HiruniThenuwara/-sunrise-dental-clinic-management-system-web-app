@@ -10,6 +10,10 @@
     </div><%-- .main --%>
 </div><%-- .layout --%>
 
+<%-- Pagination for every list table. Loaded here so that a new screen
+     gets it without remembering to add anything. --%>
+<script src="${pageContext.request.contextPath}/assets/js/table-pager.js?v=1"></script>
+
 <script>
     // Close the mobile menu when a menu item is tapped.
     document.querySelectorAll('.nav-link').forEach(function (link) {
