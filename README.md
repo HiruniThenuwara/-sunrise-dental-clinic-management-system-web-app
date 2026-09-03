@@ -151,6 +151,22 @@ com.sunrise
    http://localhost:8080/sunrise-dental-clinic/login.jsp
    ```
 
+### Running it on another computer with XAMPP only
+
+XAMPP ships both MySQL and Tomcat, so a second machine needs nothing else except a
+**JDK 17 or newer** with `JAVA_HOME` set. The application targets **Servlet 3.1**, which
+XAMPP's Tomcat 8.5 supports, and it runs unchanged on Tomcat 9 and 10.0.
+
+1. Start **MySQL** in the XAMPP Control Panel
+2. Open **phpMyAdmin** → *Import* → choose `database/schema.sql` → *Go*
+3. Copy `target/sunrise-dental-clinic.war` into `C:\xampp\tomcat\webapps\`
+4. Start **Tomcat** in the XAMPP Control Panel
+5. Open `http://localhost:8080/sunrise-dental-clinic/`
+
+If that machine's MySQL has a root password, set it in
+`C:\xampp\tomcat\webapps\sunrise-dental-clinic\WEB-INF\classes\db.properties`
+after Tomcat has unpacked the WAR, then restart Tomcat.
+
 ### Alternative: run from the terminal
 
 If you prefer not to use the Eclipse server view, build the WAR and drop it into Tomcat:
@@ -163,32 +179,107 @@ C:\tomcat9\bin\startup.bat        # start Tomcat  (shutdown.bat to stop)
 
 Then open `http://localhost:8080/sunrise-dental-clinic/`.
 
-### Default login
+### Default logins
 
-| Username | Password | Role |
-|---|---|---|
-| `admin` | `admin123` | Administrator |
+| Username | Password | Role | Can do |
+|---|---|---|---|
+| `admin` | `admin123` | Administrator | Dentists, treatments, working hours, reports, staff accounts |
+| `nimali` | `nimali123` | Receptionist | Register appointments, search, billing |
 
-> Change this password before any real deployment. It exists only for demonstration.
+> These demonstration passwords must be changed before any real deployment.
+> Passwords are stored as a SHA-256 hash of (salt + password) with a unique random
+> salt per account; the plain password is never stored or logged.
 
 ---
 
-## Running the Tests
+## Web Services
+
+The system is a distributed application: the browser and any other client read and
+write through JSON endpoints. All of them sit behind the same login and return
+`401` with a JSON body when called without a session.
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/doctors` | GET | Dentists available for booking |
+| `/api/slots?doctorId=1&date=2026-09-14` | GET | Bookable times, with taken ones marked |
+| `/api/appointments?no=APT-20260914-001` | GET | One visit |
+| `/api/appointments?date=2026-09-14` | GET | A day's list |
+| `/api/appointments` | POST | Register a visit |
+
+`POST /api/appointments` uses the status code to say what happened: **201** created,
+**400** invalid input, **409** the slot is already taken. That distinction lets another
+system tell "you typed something wrong" apart from "somebody else just took that time".
+
+```bash
+curl -i "http://localhost:8080/sunrise-dental-clinic/api/slots?doctorId=1&date=2026-09-14"
+```
+
+---
+
+## Testing
 
 ```bash
 mvn clean test
 ```
 
-Test reports are generated in `target/surefire-reports/`.
-Unit tests use **Mockito** mock DAOs, so no database is required to run them.
+**139 automated tests**, all passing. The report is written to `target/surefire-reports/`.
+
+| Test class | Cases | Covers |
+|---|---|---|
+| `AuthServiceTest` | 10 | Login, hashing, remember-me |
+| `ValidationServiceTest` | 62 | Every input rule, including injection strings |
+| `SlotServiceTest` | 12 | Slot generation and availability |
+| `AppointmentServiceTest` | 13 | Numbering and double booking |
+| `BillingServiceTest` | 16 | Pricing rules and refusals |
+| `DoctorDaoImplTest` | 10 | Real SQL against H2 |
+| `AppointmentDaoImplTest` | 11 | Transactions and the unique constraint |
+| `BookingEndToEndTest` | 5 | The whole journey, nothing mocked |
+
+Unit tests use **Mockito** mocks in place of the DAOs and integration tests use an
+in-memory **H2** database, so the whole suite runs with no MySQL server. That is why
+it can run unattended on the build server.
+
+**Test driven development** was used for every service class. The git history shows a
+commit named `(TDD red)` immediately before each matching `(TDD green)` commit.
 
 ---
 
-## Project Documentation
+## Continuous Integration
 
-The system design (use case, class and sequence diagrams), the test plan and the
-requirement traceability matrix are provided in the submitted assessment report
-rather than in this repository.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and pull
+request:
+
+1. Check out and set up JDK 17 with a cached Maven repository
+2. `mvn clean compile`
+3. `mvn test` — all 139 tests
+4. `mvn package` — builds the deployable WAR
+5. Uploads the Surefire test report as an artifact (**even when the build fails**,
+   because that is when the report matters most)
+6. Uploads the WAR
+7. Writes a pass/fail summary onto the run page
+
+---
+
+## Project Structure
+
+```
+src/main/java/com/sunrise/
+├── model/        Entities and enums (User, Doctor, Patient, Appointment, Bill, ...)
+├── dao/          DAO interfaces, DaoFactory, DBConnection (Singleton)
+│   └── impl/     JDBC implementations
+├── service/      Business rules (Auth, Validation, Slot, Appointment, Billing, Report, Staff)
+│   └── billing/  BillingStrategy and its three implementations
+├── controller/   Servlets
+├── api/          REST/JSON web services + JsonWriter
+└── filter/       AuthFilter (Front Controller)
+
+src/main/webapp/
+├── WEB-INF/views/   JSP views, unreachable by direct URL
+└── assets/          CSS and JavaScript
+
+src/test/java/       139 tests
+database/schema.sql  MySQL schema and seed data
+```
 
 ---
 
@@ -206,6 +297,29 @@ feature/* -> one branch per feature, merged through Pull Requests
 | `v0.2.0` | All user interface pages |
 | `v0.3.0` | Database, business logic and web services |
 | `v1.0.0` | Tests, CI/CD pipeline and documentation |
+
+Commit messages follow a consistent style, and the test driven pairs are visible in
+the log:
+
+```
+test: add failing appointment and double booking tests (TDD red)
+feat(appointment): implement appointment service (TDD green)
+```
+
+---
+
+## Security Notes
+
+| Concern | How it is handled |
+|---|---|
+| SQL injection | Every query uses `PreparedStatement` with `?` placeholders; proved by a test that stores `Robert'); DROP TABLE doctors; --` and checks the table survives |
+| Password storage | SHA-256 over (unique salt + password); never stored or logged in plain text |
+| Session fixation | The session is invalidated and a new id issued after a successful login |
+| Cross site scripting | Output is escaped with `<c:out>`; the JSON writer escapes quotes, backslashes and control characters |
+| Cookie theft | The remember-me cookie is `HttpOnly` and signed, so it cannot be read by JavaScript or forged |
+| Unauthorised access | `AuthFilter` guards `/admin/*` and `/api/*`; role checks are enforced in the servlet, not just by hiding menu items |
+| Cached pages | Protected pages send `no-store`, so the Back button cannot show the previous user's data |
+| Deletion of history | Dentists, treatments and staff accounts are deactivated, never deleted, so past records stay intact |
 
 Continuous integration runs `mvn clean test` on every push and pull request through
 GitHub Actions (`.github/workflows/ci.yml`).

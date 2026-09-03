@@ -101,6 +101,14 @@ public class BillingServlet extends HttpServlet {
 
         if (result.isSuccess()) {
             Bill bill = result.getBill();
+
+            new com.sunrise.service.ActivityLogService().record(request,
+                    com.sunrise.model.ActivityAction.BILL_CREATED,
+                    "Bill", bill.getBillNo(),
+                    "LKR " + bill.getTotalAmount() + " for " + appointment.getAppointmentNo()
+                            + " (" + result.getRuleApplied() + ", paid by "
+                            + bill.getPaymentMethod().getDisplayName() + ")");
+
             request.setAttribute("bill", bill);
             request.setAttribute("appointment", appointment);
             request.setAttribute("ruleApplied", result.getRuleApplied());

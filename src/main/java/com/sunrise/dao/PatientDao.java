@@ -1,6 +1,7 @@
 package com.sunrise.dao;
 
 import com.sunrise.model.Patient;
+import com.sunrise.model.PatientSummary;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -64,4 +65,26 @@ public interface PatientDao {
      * @return how many patients are registered
      */
     int countAll();
+
+    /**
+     * Every patient together with a summary of their history: how many
+     * visits, when they were last seen, when they are next due, and what
+     * they have been billed in total.
+     *
+     * <p>The counts are worked out by the database in one query rather than
+     * by loading each patient's appointments in turn, so the page stays
+     * quick as the clinic's history grows.</p>
+     *
+     * @param search part of a name, contact number or NIC, or {@code null}
+     *               for everybody
+     * @return the patient list, most recently seen first
+     */
+    List<PatientSummary> findAllWithHistory(String search);
+
+    /**
+     * @param patientId the patient
+     * @return their history summary, or {@link Optional#empty()} if the
+     *         patient does not exist
+     */
+    Optional<PatientSummary> findSummaryById(int patientId);
 }

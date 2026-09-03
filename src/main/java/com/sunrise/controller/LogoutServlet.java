@@ -37,6 +37,13 @@ public class LogoutServlet extends HttpServlet {
             Object attribute = session.getAttribute(AuthService.SESSION_USER_KEY);
             if (attribute instanceof User) {
                 LOGGER.info("Logout: " + ((User) attribute).getUsername());
+
+                // Recorded before the session is destroyed, while we still
+                // know who is signing out.
+                new com.sunrise.service.ActivityLogService().record(request,
+                        com.sunrise.model.ActivityAction.LOGOUT,
+                        "Account", ((User) attribute).getUsername(),
+                        "Signed out of the system");
             }
             session.invalidate();
         }

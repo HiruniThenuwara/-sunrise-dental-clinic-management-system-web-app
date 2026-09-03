@@ -165,6 +165,35 @@ CREATE TABLE bills (
 
 
 -- =====================================================================
+--  8. activity_log  -  who did what, and when
+--
+--  The clinic handles patient records, so it must be possible to answer
+--  "who changed this?" after the fact. The username is stored as text as
+--  well as by id, so the log still reads correctly if an account is later
+--  renamed or withdrawn, and user_id is nullable because a failed login
+--  has nobody signed in.
+-- =====================================================================
+CREATE TABLE activity_log (
+    log_id     INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT          NULL,
+    username   VARCHAR(50)  NULL,
+    action     VARCHAR(40)  NOT NULL,
+    entity     VARCHAR(40)  NULL,
+    entity_ref VARCHAR(50)  NULL,
+    details    VARCHAR(255) NULL,
+    ip_address VARCHAR(45)  NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_activity_created (created_at),
+    INDEX idx_activity_user (user_id),
+    INDEX idx_activity_action (action),
+
+    CONSTRAINT fk_activity_user FOREIGN KEY (user_id)
+        REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+
+-- =====================================================================
 --  SEED DATA
 -- =====================================================================
 

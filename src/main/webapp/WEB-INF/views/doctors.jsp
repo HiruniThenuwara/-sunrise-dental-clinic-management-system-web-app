@@ -14,7 +14,7 @@
 
 <div class="page-head">
     <div>
-        <h2 class="page-head__title">Dentists</h2>
+        <h2 class="page-head__title">Dentists Management</h2>
         <p class="page-head__sub">Add dentists, set their consultation fee and control who can accept bookings.</p>
     </div>
     <button class="btn btn--primary" type="button" onclick="openDoctorModal()">+ Add Dentist</button>

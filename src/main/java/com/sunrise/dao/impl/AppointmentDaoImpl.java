@@ -214,6 +214,28 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     @Override
+    public List<Appointment> findByPatient(int patientId) {
+        List<Appointment> appointments = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     SELECT_FULL + "WHERE a.patient_id = ? "
+                     + "ORDER BY a.appointment_date DESC, a.appointment_time DESC")) {
+
+            statement.setInt(1, patientId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read the visit history", e);
+        }
+        return appointments;
+    }
+
+    @Override
     public List<LocalTime> findBookedTimes(int doctorId, LocalDate date) {
         List<LocalTime> times = new ArrayList<>();
 

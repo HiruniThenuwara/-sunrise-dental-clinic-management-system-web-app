@@ -71,8 +71,39 @@
     <div class="side-column">
 
         <section class="panel">
-            <header class="panel__head"><h3>Patient Details</h3></header>
+            <header class="panel__head">
+                <h3>Patient Details</h3>
+                <span class="badge badge--muted" id="patientBadge">New patient</span>
+            </header>
             <div class="panel__body">
+
+                <%-- Look up somebody who has been here before. The list comes
+                     from /api/patients while the receptionist types, and one
+                     click fills in the fields below. Retyping an address is
+                     how the same person ends up in the system twice. --%>
+                <div class="form-field patient-lookup">
+                    <label for="patientLookup">Returning patient?</label>
+                    <input class="input" type="search" id="patientLookup"
+                           autocomplete="off"
+                           placeholder="Search by name, telephone number or NIC">
+                    <p class="hint">
+                        Start typing to find an existing record, or leave this empty
+                        and fill in the details below for a new patient.
+                    </p>
+
+                    <div class="lookup-results" id="lookupResults" hidden></div>
+                </div>
+
+                <div class="chosen-patient" id="chosenPatient" hidden>
+                    <span>
+                        Using the existing record for
+                        <strong id="chosenPatientName"></strong>
+                        <small id="chosenPatientVisits"></small>
+                    </span>
+                    <button type="button" class="link link--button" onclick="clearChosenPatient()">
+                        Clear
+                    </button>
+                </div>
 
                 <div class="form-row">
                     <div class="form-field">
@@ -241,6 +272,140 @@
             showToast('Please choose a time slot before saving.', 'error');
         }
     });
+
+    /* =================================================================
+       Returning patient lookup.
+
+       Calls the /api/patients web service while the receptionist types and
+       fills the form from the record they pick. The request is delayed
+       slightly after each keystroke, so typing a name sends one request
+       rather than one per letter.
+       ================================================================= */
+    (function () {
+        var lookup = document.getElementById('patientLookup');
+        var results = document.getElementById('lookupResults');
+        var timer = null;
+
+        function hideResults() {
+            results.hidden = true;
+            results.innerHTML = '';
+        }
+
+        function message(text) {
+            var line = document.createElement('p');
+            line.className = 'lookup-empty';
+            line.textContent = text;
+            results.innerHTML = '';
+            results.appendChild(line);
+            results.hidden = false;
+        }
+
+        function show(patients) {
+            results.innerHTML = '';
+
+            patients.forEach(function (patient) {
+                var row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'lookup-row';
+
+                var name = document.createElement('strong');
+                name.textContent = patient.name;
+
+                var detail = document.createElement('small');
+                detail.textContent = patient.contactNumber
+                        + (patient.nic ? '  |  ' + patient.nic : '')
+                        + '  |  ' + patient.visits
+                        + (patient.visits === 1 ? ' visit' : ' visits')
+                        + '  |  last seen ' + patient.lastVisit;
+
+                row.appendChild(name);
+                row.appendChild(detail);
+
+                /* Built with textContent rather than innerHTML, so a name
+                   containing < or & is shown as text and never as markup. */
+                row.addEventListener('click', function () {
+                    fillFrom(patient);
+                });
+
+                results.appendChild(row);
+            });
+
+            results.hidden = false;
+        }
+
+        function fillFrom(patient) {
+            document.getElementById('patientName').value = patient.name || '';
+            document.getElementById('address').value = patient.address || '';
+            document.getElementById('contactNumber').value = patient.contactNumber || '';
+            document.getElementById('email').value = patient.email || '';
+            document.getElementById('nic').value = patient.nic || '';
+
+            document.getElementById('chosenPatientName').textContent = patient.name;
+            document.getElementById('chosenPatientVisits').textContent =
+                    ' - ' + patient.visits + (patient.visits === 1 ? ' visit' : ' visits')
+                    + ', last seen ' + patient.lastVisit;
+            document.getElementById('chosenPatient').hidden = false;
+
+            var badge = document.getElementById('patientBadge');
+            badge.textContent = 'Returning patient';
+            badge.className = 'badge badge--success';
+
+            lookup.value = '';
+            hideResults();
+            showToast(patient.name + "'s details were filled in.", 'success');
+        }
+
+        lookup.addEventListener('input', function () {
+            var term = lookup.value.trim();
+            clearTimeout(timer);
+
+            if (term.length < 2) {
+                hideResults();
+                return;
+            }
+
+            timer = setTimeout(function () {
+                fetch('${ctx}/api/patients?q=' + encodeURIComponent(term))
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('lookup failed');
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (!data.patients.length) {
+                            message('No existing patient matched. Fill in the details below '
+                                    + 'to register them as a new patient.');
+                            return;
+                        }
+                        show(data.patients);
+                    })
+                    .catch(function () {
+                        message('The patient search is unavailable. '
+                                + 'Type the details in below instead.');
+                    });
+            }, 250);
+        });
+
+        /* Clicking anywhere else puts the list away. */
+        document.addEventListener('click', function (event) {
+            if (!results.contains(event.target) && event.target !== lookup) {
+                hideResults();
+            }
+        });
+    })();
+
+    /* Goes back to entering a new patient by hand. */
+    function clearChosenPatient() {
+        ['patientName', 'address', 'contactNumber', 'email', 'nic'].forEach(function (id) {
+            document.getElementById(id).value = '';
+        });
+        document.getElementById('chosenPatient').hidden = true;
+
+        var badge = document.getElementById('patientBadge');
+        badge.textContent = 'New patient';
+        badge.className = 'badge badge--muted';
+    }
 </script>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

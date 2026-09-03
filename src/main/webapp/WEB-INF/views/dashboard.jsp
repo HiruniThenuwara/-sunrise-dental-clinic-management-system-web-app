@@ -5,6 +5,11 @@
 <%--
     Admin panel home page. Every figure is read from the database by
     DashboardServlet when the page is requested.
+
+    The icons are inline SVG rather than text characters: a character such as
+    the watch symbol renders differently on every machine and shows as an
+    empty box where the font lacks it, whereas an SVG looks the same
+    everywhere and takes the colour of its card.
 --%>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -47,7 +52,14 @@
     <article class="stat-card">
         <div class="stat-card__top">
             <p class="stat-card__label">Today's Appointments</p>
-            <span class="stat-card__icon stat-card__icon--teal">&#9200;</span>
+            <span class="stat-card__icon stat-card__icon--teal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/>
+                    <path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>
+                    <path d="m8.5 14.5 2 2 4-4"/>
+                </svg>
+            </span>
         </div>
         <p class="stat-card__value">${todayCount}</p>
         <p class="stat-card__trend">${todayCompleted} completed so far</p>
@@ -56,7 +68,14 @@
     <article class="stat-card">
         <div class="stat-card__top">
             <p class="stat-card__label">Registered Patients</p>
-            <span class="stat-card__icon stat-card__icon--blue">&#9787;</span>
+            <span class="stat-card__icon stat-card__icon--blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="9" cy="8" r="3.4"/>
+                    <path d="M2.5 20a6.5 6.5 0 0 1 13 0"/>
+                    <path d="M16.5 5.2a3.4 3.4 0 0 1 0 5.6M18 20a6.4 6.4 0 0 0-2.2-4.8"/>
+                </svg>
+            </span>
         </div>
         <p class="stat-card__value">${patientCount}</p>
         <p class="stat-card__trend">on file at the clinic</p>
@@ -65,7 +84,15 @@
     <article class="stat-card">
         <div class="stat-card__top">
             <p class="stat-card__label">Dentists On Duty</p>
-            <span class="stat-card__icon stat-card__icon--violet">&#9877;</span>
+            <span class="stat-card__icon stat-card__icon--violet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 3v5.5a4.5 4.5 0 0 0 9 0V3"/>
+                    <path d="M4 3h3M13.5 3h3"/>
+                    <path d="M10.5 13v3a4.5 4.5 0 0 0 9 0v-1.5"/>
+                    <circle cx="19.5" cy="12.5" r="2"/>
+                </svg>
+            </span>
         </div>
         <p class="stat-card__value">${activeDoctors}</p>
         <p class="stat-card__trend">of ${totalDoctors} registered dentists</p>
@@ -74,7 +101,13 @@
     <article class="stat-card">
         <div class="stat-card__top">
             <p class="stat-card__label">Today's Revenue</p>
-            <span class="stat-card__icon stat-card__icon--amber">&#8377;</span>
+            <span class="stat-card__icon stat-card__icon--amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 3.5h14v17l-2.3-1.6-2.3 1.6-2.4-1.6L9.6 20.5 7.3 19 5 20.5z"/>
+                    <path d="M9 8.5h6M9 12h6"/>
+                </svg>
+            </span>
         </div>
         <p class="stat-card__value">${todayRevenue}</p>
         <p class="stat-card__trend">LKR taken today</p>
@@ -194,21 +227,57 @@
 
                     <c:if test="${not sessionScope.user.admin}">
                         <a class="quick-action" href="${ctx}/admin/appointments/new">
-                            <span class="quick-action__icon">&#43;</span>
+                            <span class="quick-action__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/>
+                                    <path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>
+                                    <path d="M12 12.5v5M9.5 15h5"/>
+                                </svg>
+                            </span>
                             <span><strong>Register Appointment</strong>
                                   <small>Add a new patient visit</small></span>
                         </a>
                     </c:if>
 
                     <a class="quick-action" href="${ctx}/admin/appointments">
-                        <span class="quick-action__icon">&#128269;</span>
+                        <span class="quick-action__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <circle cx="10.5" cy="10.5" r="6.5"/>
+                                <path d="m15.5 15.5 5 5"/>
+                            </svg>
+                        </span>
                         <span><strong>Find Appointment</strong>
                               <small>Search by appointment number</small></span>
                     </a>
 
+                    <a class="quick-action" href="${ctx}/admin/patients">
+                        <span class="quick-action__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <circle cx="9" cy="8" r="3.4"/>
+                                <path d="M2.5 20a6.5 6.5 0 0 1 13 0"/>
+                                <path d="M16.5 5.2a3.4 3.4 0 0 1 0 5.6M18 20a6.4 6.4 0 0 0-2.2-4.8"/>
+                            </svg>
+                        </span>
+                        <span><strong>Patient Records</strong>
+                              <small>Find a patient and their history</small></span>
+                    </a>
+
                     <c:if test="${not sessionScope.user.admin}">
                         <a class="quick-action" href="${ctx}/admin/billing">
-                            <span class="quick-action__icon">&#8377;</span>
+                            <span class="quick-action__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M5 3.5h14v17l-2.3-1.6-2.3 1.6-2.4-1.6L9.6 20.5 7.3 19 5 20.5z"/>
+                                    <path d="M9 8.5h6M9 12h6"/>
+                                </svg>
+                            </span>
                             <span><strong>Print a Bill</strong>
                                   <small>Calculate and print a receipt</small></span>
                         </a>
@@ -216,19 +285,46 @@
 
                     <c:if test="${sessionScope.user.admin}">
                         <a class="quick-action" href="${ctx}/admin/doctors">
-                            <span class="quick-action__icon">&#9877;</span>
+                            <span class="quick-action__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M6 3v5.5a4.5 4.5 0 0 0 9 0V3"/>
+                                    <path d="M4 3h3M13.5 3h3"/>
+                                    <path d="M10.5 13v3a4.5 4.5 0 0 0 9 0v-1.5"/>
+                                    <circle cx="19.5" cy="12.5" r="2"/>
+                                </svg>
+                            </span>
                             <span><strong>Manage Dentists</strong>
                                   <small>Add a dentist or change a fee</small></span>
                         </a>
+
                         <a class="quick-action" href="${ctx}/admin/reports">
-                            <span class="quick-action__icon">&#9650;</span>
+                            <span class="quick-action__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M3.5 20.5h17"/>
+                                    <rect x="5" y="12" width="3.6" height="8.5" rx="1"/>
+                                    <rect x="10.2" y="7" width="3.6" height="13.5" rx="1"/>
+                                    <rect x="15.4" y="3.5" width="3.6" height="17" rx="1"/>
+                                </svg>
+                            </span>
                             <span><strong>View Reports</strong>
                                   <small>Workload and revenue</small></span>
                         </a>
                     </c:if>
 
                     <a class="quick-action" href="${ctx}/admin/help">
-                        <span class="quick-action__icon">?</span>
+                        <span class="quick-action__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M9.6 9.4a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.4"/>
+                                <path d="M12 16.8v.1"/>
+                            </svg>
+                        </span>
                         <span><strong>Help Guide</strong>
                               <small>Step by step instructions</small></span>
                     </a>

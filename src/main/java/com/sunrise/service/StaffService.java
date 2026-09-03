@@ -197,9 +197,21 @@ public class StaffService {
             return StaffResult.failed(List.of("That staff account no longer exists."));
         }
 
-        return userDao.setActive(userId, active)
-                ? StaffResult.updated(found.get())
-                : StaffResult.failed(List.of("The account status could not be changed."));
+        if (!userDao.setActive(userId, active)) {
+            return StaffResult.failed(List.of("The account status could not be changed."));
+        }
+
+        // The object was loaded before the change, so it still carries the
+        // old status. Bringing it up to date matters because the caller uses
+        // it to word the message it shows, and it would otherwise describe
+        // the state the account was in rather than the state it is in now.
+        User user = found.get();
+        user.setActive(active);
+
+        LOGGER.info("Staff account " + user.getUsername()
+                + (active ? " activated" : " deactivated"));
+
+        return StaffResult.updated(user);
     }
 
     /**

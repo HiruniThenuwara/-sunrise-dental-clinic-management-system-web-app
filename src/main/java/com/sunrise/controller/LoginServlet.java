@@ -37,10 +37,12 @@ public class LoginServlet extends HttpServlet {
     private static final String DASHBOARD = "/admin/dashboard";
 
     private transient AuthService authService;
+    private transient com.sunrise.service.ActivityLogService activityLog;
 
     @Override
     public void init() {
         this.authService = new AuthService();
+        this.activityLog = new com.sunrise.service.ActivityLogService();
     }
 
     /** Shows the login form, or skips it if the user is already logged in. */
@@ -73,6 +75,11 @@ public class LoginServlet extends HttpServlet {
             // One generic message for every failure reason. Telling the user
             // "no such username" would let an attacker discover valid accounts.
             LOGGER.warning("Failed login attempt for username: " + username);
+
+            // The refused attempt is recorded even though nobody is signed
+            // in, because repeated failures against one account are exactly
+            // what an administrator needs to be able to see.
+            activityLog.recordLoginAttempt(request, username, null, false);
             request.setAttribute("error", "Invalid username or password. Please try again.");
             request.setAttribute("username", username);
             request.getRequestDispatcher(LOGIN_VIEW).forward(request, response);
@@ -91,6 +98,8 @@ public class LoginServlet extends HttpServlet {
         session.setMaxInactiveInterval(30 * 60);
 
         addOrClearRememberCookie(request, response, user, rememberMe);
+
+        activityLog.recordLoginAttempt(request, username, user, true);
 
         LOGGER.info("Login successful for user: " + user.getUsername());
         response.sendRedirect(request.getContextPath() + DASHBOARD);
