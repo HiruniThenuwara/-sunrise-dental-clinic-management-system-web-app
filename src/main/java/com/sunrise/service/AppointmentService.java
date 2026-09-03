@@ -65,7 +65,12 @@ public class AppointmentService {
     }
 
     /**
-     * Registers a patient visit (Requirement 2).
+     * Registers a patient visit, without recording the patient's gender or
+     * how the booking was made.
+     *
+     * <p>Kept as the shorter form of the call: a walk-in with no gender
+     * recorded is the ordinary case at the front desk, and it is what every
+     * appointment was before those two fields existed.</p>
      *
      * @return the saved appointment, or the problems to show on the form
      */
@@ -78,6 +83,33 @@ public class AppointmentService {
                                        String treatmentIdText,
                                        LocalDate appointmentDate,
                                        String appointmentTimeText,
+                                       String notes,
+                                       User createdBy) {
+
+        return register(patientName, address, contactNumber, email, nic, null,
+                doctorIdText, treatmentIdText, appointmentDate, appointmentTimeText,
+                null, notes, createdBy);
+    }
+
+    /**
+     * Registers a patient visit (Requirement 2).
+     *
+     * @param genderText      the patient's gender, or {@code null} if not given
+     * @param bookingTypeText {@code WALK_IN} or {@code ONLINE}; anything else
+     *                        is treated as a walk-in
+     * @return the saved appointment, or the problems to show on the form
+     */
+    public RegistrationResult register(String patientName,
+                                       String address,
+                                       String contactNumber,
+                                       String email,
+                                       String nic,
+                                       String genderText,
+                                       String doctorIdText,
+                                       String treatmentIdText,
+                                       LocalDate appointmentDate,
+                                       String appointmentTimeText,
+                                       String bookingTypeText,
                                        String notes,
                                        User createdBy) {
 
@@ -105,7 +137,8 @@ public class AppointmentService {
 
         // 3. A returning patient keeps their existing record, matched on the
         //    telephone number, so the same person is not stored twice.
-        Patient patient = findOrCreatePatient(patientName, address, contactNumber, email, nic);
+        Patient patient = findOrCreatePatient(
+                patientName, address, contactNumber, email, nic, genderText);
 
         // 4. Build and store the appointment.
         Appointment appointment = new Appointment();
@@ -116,6 +149,7 @@ public class AppointmentService {
         appointment.setAppointmentDate(appointmentDate);
         appointment.setAppointmentTime(appointmentTime);
         appointment.setStatus(AppointmentStatus.BOOKED);
+        appointment.setBookingType(com.sunrise.model.BookingType.fromString(bookingTypeText));
         appointment.setNotes(emptyToNull(notes));
         appointment.setCreatedBy(createdBy);
 
@@ -176,7 +210,8 @@ public class AppointmentService {
      * otherwise stores a new one.
      */
     private Patient findOrCreatePatient(String patientName, String address,
-                                        String contactNumber, String email, String nic) {
+                                        String contactNumber, String email,
+                                        String nic, String genderText) {
 
         Optional<Patient> existing = patientDao.findByContactNumber(contactNumber.trim());
         if (existing.isPresent()) {
@@ -186,6 +221,7 @@ public class AppointmentService {
         Patient patient = new Patient(patientName.trim(), address.trim(), contactNumber.trim());
         patient.setEmail(emptyToNull(email));
         patient.setNic(emptyToNull(nic));
+        patient.setGender(com.sunrise.model.Gender.fromString(genderText));
 
         Patient inserted = patientDao.insert(patient);
         return inserted == null ? patient : inserted;

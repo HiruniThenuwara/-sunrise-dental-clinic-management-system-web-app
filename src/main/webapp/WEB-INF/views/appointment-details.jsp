@@ -118,6 +118,10 @@
                     <dd><c:out value="${appointment.formattedTime}"/>
                         <span class="muted">(${appointment.treatment.estimatedMinutes} minutes)</span></dd>
 
+                    <dt>Booked As</dt>
+                    <dd><span class="badge badge--${appointment.bookingType.badgeStyle}">
+                        <c:out value="${appointment.bookingType.displayName}"/></span></dd>
+
                     <dt>Status</dt>
                     <dd><span class="badge badge--${appointment.status.badgeStyle}">
                         <c:out value="${appointment.status.displayName}"/></span></dd>

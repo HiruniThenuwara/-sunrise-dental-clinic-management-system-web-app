@@ -149,6 +149,34 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="gender">Gender</label>
+                        <select class="input" id="gender" name="gender">
+                            <option value="">Prefer not to say</option>
+                            <option value="MALE" ${formGender eq 'MALE' ? 'selected' : ''}>Male</option>
+                            <option value="FEMALE" ${formGender eq 'FEMALE' ? 'selected' : ''}>Female</option>
+                            <option value="OTHER" ${formGender eq 'OTHER' ? 'selected' : ''}>Other</option>
+                        </select>
+                        <p class="hint">Optional. Recorded on the patient's file.</p>
+                    </div>
+
+                    <%-- How the booking reached the clinic. The daily report
+                         is far more useful when walk-ins can be told apart
+                         from booked slots. --%>
+                    <div class="form-field">
+                        <label for="bookingType">Appointment Type <span class="required">*</span></label>
+                        <select class="input" id="bookingType" name="bookingType" required>
+                            <option value="WALK_IN" ${formBookingType eq 'ONLINE' ? '' : 'selected'}>
+                                Walk in - came to desk
+                            </option>
+                            <option value="ONLINE" ${formBookingType eq 'ONLINE' ? 'selected' : ''}>
+                                Online - telephone
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -339,6 +367,7 @@
             document.getElementById('contactNumber').value = patient.contactNumber || '';
             document.getElementById('email').value = patient.email || '';
             document.getElementById('nic').value = patient.nic || '';
+            document.getElementById('gender').value = patient.gender || '';
 
             document.getElementById('chosenPatientName').textContent = patient.name;
             document.getElementById('chosenPatientVisits').textContent =
@@ -397,7 +426,7 @@
 
     /* Goes back to entering a new patient by hand. */
     function clearChosenPatient() {
-        ['patientName', 'address', 'contactNumber', 'email', 'nic'].forEach(function (id) {
+        ['patientName', 'address', 'contactNumber', 'email', 'nic', 'gender'].forEach(function (id) {
             document.getElementById(id).value = '';
         });
         document.getElementById('chosenPatient').hidden = true;

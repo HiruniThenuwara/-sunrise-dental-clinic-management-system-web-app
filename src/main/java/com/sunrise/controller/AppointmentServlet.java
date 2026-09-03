@@ -163,10 +163,12 @@ public class AppointmentServlet extends HttpServlet {
                 request.getParameter("contactNumber"),
                 request.getParameter("email"),
                 request.getParameter("nic"),
+                request.getParameter("gender"),
                 request.getParameter("doctorId"),
                 request.getParameter("treatmentId"),
                 appointmentDate,
                 request.getParameter("appointmentTime"),
+                request.getParameter("bookingType"),
                 request.getParameter("notes"),
                 currentUser(request));
 
@@ -207,6 +209,8 @@ public class AppointmentServlet extends HttpServlet {
         request.setAttribute("formContact", request.getParameter("contactNumber"));
         request.setAttribute("formEmail", request.getParameter("email"));
         request.setAttribute("formNic", request.getParameter("nic"));
+        request.setAttribute("formGender", request.getParameter("gender"));
+        request.setAttribute("formBookingType", request.getParameter("bookingType"));
         request.setAttribute("formNotes", request.getParameter("notes"));
         request.setAttribute("formTreatmentId", parseId(request.getParameter("treatmentId")));
         request.setAttribute("formTime", request.getParameter("appointmentTime"));

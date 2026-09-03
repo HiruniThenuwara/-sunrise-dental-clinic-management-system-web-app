@@ -40,7 +40,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     /** Joins everything the details screen needs in one query. */
     private static final String SELECT_FULL =
             "SELECT a.appointment_id, a.appointment_no, a.appointment_date, a.appointment_time, "
-            + "a.status, a.notes, a.created_at, "
+            + "a.status, a.booking_type, a.notes, a.created_at, "
             + "p.patient_id, p.patient_name, p.address, p.contact_number, p.email, p.nic, "
             + "p.date_of_birth, p.gender, "
             + "d.doctor_id, d.doctor_name, d.specialization, d.consultation_fee, "
@@ -52,8 +52,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     private static final String INSERT =
             "INSERT INTO appointments (appointment_no, patient_id, doctor_id, treatment_id, "
-            + "appointment_date, appointment_time, status, notes, created_by) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "booking_type, appointment_date, appointment_time, status, notes, created_by) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String EXISTS_AT_SLOT =
             "SELECT 1 FROM appointments WHERE doctor_id = ? AND appointment_date = ? "
@@ -110,15 +110,16 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 statement.setInt(2, patient == null ? 0 : patient.getPatientId());
                 statement.setInt(3, appointment.getDoctor().getDoctorId());
                 statement.setInt(4, appointment.getTreatment().getTreatmentId());
-                statement.setDate(5, Date.valueOf(appointment.getAppointmentDate()));
-                statement.setTime(6, Time.valueOf(appointment.getAppointmentTime()));
-                statement.setString(7, appointment.getStatus().name());
-                statement.setString(8, appointment.getNotes());
+                statement.setString(5, appointment.getBookingType().name());
+                statement.setDate(6, Date.valueOf(appointment.getAppointmentDate()));
+                statement.setTime(7, Time.valueOf(appointment.getAppointmentTime()));
+                statement.setString(8, appointment.getStatus().name());
+                statement.setString(9, appointment.getNotes());
 
                 if (appointment.getCreatedBy() == null) {
-                    statement.setNull(9, java.sql.Types.INTEGER);
+                    statement.setNull(10, java.sql.Types.INTEGER);
                 } else {
-                    statement.setInt(9, appointment.getCreatedBy().getUserId());
+                    statement.setInt(10, appointment.getCreatedBy().getUserId());
                 }
 
                 statement.executeUpdate();
@@ -337,6 +338,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
         appointment.setAppointmentDate(resultSet.getDate("appointment_date").toLocalDate());
         appointment.setAppointmentTime(resultSet.getTime("appointment_time").toLocalTime());
         appointment.setStatus(AppointmentStatus.fromString(resultSet.getString("status")));
+        appointment.setBookingType(
+                com.sunrise.model.BookingType.fromString(resultSet.getString("booking_type")));
         appointment.setNotes(resultSet.getString("notes"));
 
         Timestamp createdAt = resultSet.getTimestamp("created_at");
