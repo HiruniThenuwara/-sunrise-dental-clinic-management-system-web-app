@@ -58,7 +58,14 @@
     <article class="stat-card">
         <div class="stat-card__top">
             <p class="stat-card__label">Total Billed</p>
-            <span class="stat-card__icon stat-card__icon--amber">&#8377;</span>
+            <span class="stat-card__icon stat-card__icon--amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
+                    <circle cx="12" cy="12" r="2.6"/>
+                    <path d="M6 9.6v4.8M18 9.6v4.8"/>
+                </svg>
+            </span>
         </div>
         <p class="stat-card__value">${totalBilled}</p>
         <p class="stat-card__trend">LKR across all patients</p>

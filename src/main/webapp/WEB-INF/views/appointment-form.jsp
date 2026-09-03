@@ -49,6 +49,31 @@
                         </option>
                     </c:forEach>
                 </select>
+
+                <%-- Which days this dentist works. It sits under the picker
+                     because the date box comes next: without it the choice
+                     is a guess, answered by "not working on this day". --%>
+                <c:if test="${chosenDoctorId gt 0}">
+                    <div class="working-days">
+                        <c:choose>
+                            <c:when test="${empty workingDays}">
+                                <p class="hint hint--warning">
+                                    No working hours are set for this dentist. Ask an
+                                    administrator to set them on the Schedule screen.
+                                </p>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="working-days__label">Available on</span>
+                                <c:forEach var="day" items="${workingDays}">
+                                    <span class="working-days__day">
+                                        <strong><c:out value="${day.shortDayName}"/></strong>
+                                        <c:out value="${day.formattedHours}"/>
+                                    </span>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </c:if>
             </div>
             <div class="form-field">
                 <label for="pickDate">Date <span class="required">*</span></label>
@@ -149,6 +174,34 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="gender">Gender</label>
+                        <select class="input" id="gender" name="gender">
+                            <option value="">Prefer not to say</option>
+                            <option value="MALE" ${formGender eq 'MALE' ? 'selected' : ''}>Male</option>
+                            <option value="FEMALE" ${formGender eq 'FEMALE' ? 'selected' : ''}>Female</option>
+                            <option value="OTHER" ${formGender eq 'OTHER' ? 'selected' : ''}>Other</option>
+                        </select>
+                        <p class="hint">Optional. Recorded on the patient's file.</p>
+                    </div>
+
+                    <%-- How the booking reached the clinic. The daily report
+                         is far more useful when walk-ins can be told apart
+                         from booked slots. --%>
+                    <div class="form-field">
+                        <label for="bookingType">Appointment Type <span class="required">*</span></label>
+                        <select class="input" id="bookingType" name="bookingType" required>
+                            <option value="WALK_IN" ${formBookingType eq 'ONLINE' ? '' : 'selected'}>
+                                Walk in - came to desk
+                            </option>
+                            <option value="ONLINE" ${formBookingType eq 'ONLINE' ? 'selected' : ''}>
+                                Online - telephone
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -164,7 +217,10 @@
                             <option value="${treatment.treatmentId}"
                                     ${formTreatmentId eq treatment.treatmentId ? 'selected' : ''}>
                                 <c:out value="${treatment.treatmentName}"/> -
-                                LKR ${treatment.baseCost} (${treatment.estimatedMinutes} min)
+                                <%-- The slot length is not shown. It is the schedule
+                                     that decides how long a visit takes, and the
+                                     figure only confused the choice here. --%>
+                                LKR ${treatment.baseCost}
                             </option>
                         </c:forEach>
                     </select>
@@ -228,11 +284,18 @@
                     </c:when>
 
                     <c:otherwise>
+                        <%-- A closed slot stays on the grid so the staff
+                             member can see that the time exists and why it
+                             cannot be used. There are two reasons: somebody
+                             has it, or, on today's date, the clock has gone
+                             past it. --%>
                         <div class="slot-grid">
                             <c:forEach var="slot" items="${slots}">
                                 <button type="button"
-                                        class="slot-chip ${slot.available ? '' : 'slot-chip--booked'}"
+                                        class="slot-chip <c:choose><c:when test="${slot.past}">slot-chip--past</c:when><c:when test="${not slot.available}">slot-chip--booked</c:when></c:choose>"
                                         data-time="${slot.value}"
+                                        title="<c:out value='${slot.unavailableReason}'/>"
+                                        aria-disabled="${not slot.available}"
                                         onclick="selectSlot(this)">${slot.value}</button>
                             </c:forEach>
                         </div>
@@ -240,13 +303,15 @@
                         <div class="legend">
                             <span><i class="legend__dot legend__dot--free"></i> Available</span>
                             <span><i class="legend__dot legend__dot--booked"></i> Already booked</span>
+                            <span><i class="legend__dot legend__dot--past"></i> Time has passed</span>
                             <span><i class="legend__dot legend__dot--selected"></i> Selected</span>
                         </div>
 
                         <p class="hint">
-                            A booked time cannot be selected. The server checks again
-                            before saving, and the database refuses a duplicate as a
-                            final safeguard.
+                            A booked time, and any time earlier than now on today's
+                            date, cannot be selected. The server checks again before
+                            saving, and the database refuses a duplicate as a final
+                            safeguard.
                         </p>
                     </c:otherwise>
                 </c:choose>
@@ -261,7 +326,7 @@
     /* Shows the chosen time beside the form as well as in the hidden field. */
     document.addEventListener('click', function (event) {
         if (event.target.classList && event.target.classList.contains('slot-chip')
-                && !event.target.classList.contains('slot-chip--booked')) {
+                && event.target.getAttribute('aria-disabled') !== 'true') {
             document.getElementById('chosenTimeLabel').textContent = event.target.dataset.time;
         }
     });
@@ -339,6 +404,7 @@
             document.getElementById('contactNumber').value = patient.contactNumber || '';
             document.getElementById('email').value = patient.email || '';
             document.getElementById('nic').value = patient.nic || '';
+            document.getElementById('gender').value = patient.gender || '';
 
             document.getElementById('chosenPatientName').textContent = patient.name;
             document.getElementById('chosenPatientVisits').textContent =
@@ -397,7 +463,7 @@
 
     /* Goes back to entering a new patient by hand. */
     function clearChosenPatient() {
-        ['patientName', 'address', 'contactNumber', 'email', 'nic'].forEach(function (id) {
+        ['patientName', 'address', 'contactNumber', 'email', 'nic', 'gender'].forEach(function (id) {
             document.getElementById(id).value = '';
         });
         document.getElementById('chosenPatient').hidden = true;

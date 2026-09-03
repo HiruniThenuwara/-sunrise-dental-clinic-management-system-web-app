@@ -81,6 +81,8 @@ public class SlotApi extends HttpServlet {
                     .name("time").value(slot.getValue())
                     .name("label").value(slot.getLabel())
                     .name("available").value(slot.isAvailable())
+                    .name("past").value(slot.isPast())
+                    .name("reason").value(slot.getUnavailableReason())
                 .endObject();
         }
 

@@ -125,7 +125,6 @@
                 <th>Action</th>
                 <th>Record</th>
                 <th>Details</th>
-                <th>From</th>
             </tr>
             </thead>
             <tbody>
@@ -158,13 +157,12 @@
                         </c:choose>
                     </td>
                     <td class="cell-sub"><c:out value="${entry.details}"/></td>
-                    <td class="cell-sub mono"><c:out value="${entry.ipAddress}"/></td>
                 </tr>
             </c:forEach>
 
             <c:if test="${empty entries}">
                 <tr>
-                    <td colspan="6">
+                    <td colspan="5">
                         <div class="empty-state">
                             <p class="empty-state__title">Nothing recorded yet</p>
                             <p class="empty-state__text">

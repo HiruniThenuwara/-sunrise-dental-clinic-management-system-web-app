@@ -35,6 +35,7 @@ public class Appointment implements Serializable {
     private LocalDate appointmentDate;
     private LocalTime appointmentTime;
     private AppointmentStatus status = AppointmentStatus.BOOKED;
+    private BookingType bookingType = BookingType.WALK_IN;
     private String notes;
     private User createdBy;
     private LocalDateTime createdAt;
@@ -105,6 +106,15 @@ public class Appointment implements Serializable {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
+    }
+
+    /** @return whether the patient walked in or booked online */
+    public BookingType getBookingType() {
+        return bookingType;
+    }
+
+    public void setBookingType(BookingType bookingType) {
+        this.bookingType = bookingType == null ? BookingType.WALK_IN : bookingType;
     }
 
     public String getNotes() {

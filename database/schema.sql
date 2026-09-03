@@ -116,6 +116,7 @@ CREATE TABLE appointments (
     patient_id       INT         NOT NULL,
     doctor_id        INT         NOT NULL,
     treatment_id     INT         NOT NULL,
+    booking_type     VARCHAR(10) NOT NULL DEFAULT 'WALK_IN',
     appointment_date DATE        NOT NULL,
     appointment_time TIME        NOT NULL,
     status           ENUM('BOOKED','COMPLETED','CANCELLED','NO_SHOW')
