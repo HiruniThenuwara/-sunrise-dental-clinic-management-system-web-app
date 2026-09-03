@@ -197,12 +197,6 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            A returning patient is matched on their telephone number when a new
-            appointment is registered, so the same person is never stored twice.
-        </p>
-    </footer>
 </section>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
