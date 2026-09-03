@@ -161,13 +161,6 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            An account is never deleted. Deactivating it stops the person signing in
-            while keeping their name on the appointments they registered and the
-            bills they took payment for.
-        </p>
-    </footer>
 </section>
 
 <%-- ================= create / edit staff modal ================= --%>

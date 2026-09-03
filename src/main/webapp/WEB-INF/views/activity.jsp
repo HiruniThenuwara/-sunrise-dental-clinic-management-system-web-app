@@ -180,13 +180,6 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            The log is append only. Entries cannot be edited or deleted from this
-            screen, which is what makes it usable as evidence. Failed sign ins and
-            changes to who can reach patient records are highlighted.
-        </p>
-    </footer>
 </section>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

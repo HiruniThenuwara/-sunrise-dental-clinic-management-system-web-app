@@ -142,13 +142,6 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            An inactive treatment stays on old appointments and old bills, but the
-            receptionist can no longer choose it for a new appointment. Nothing is
-            deleted, so past records and their totals never change.
-        </p>
-    </footer>
 </section>
 
 <%-- ================= add / edit treatment modal ================= --%>

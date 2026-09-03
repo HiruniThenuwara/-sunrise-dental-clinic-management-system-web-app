@@ -170,12 +170,6 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            A dentist is never deleted. Deactivating removes them from the appointment
-            form while keeping their name on every past appointment and bill.
-        </p>
-    </footer>
 </section>
 
 <%-- ================= add / edit dentist modal ================= --%>

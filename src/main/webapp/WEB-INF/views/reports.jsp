@@ -190,12 +190,6 @@
             </tbody>
         </table>
     </div>
-    <footer class="panel__foot">
-        <p class="hint">
-            Revenue is taken from the bills that were actually issued, including any
-            discount given, so it reflects money taken rather than list prices.
-        </p>
-    </footer>
 </section>
 
 <script src="${ctx}/assets/js/ui.js"></script>
