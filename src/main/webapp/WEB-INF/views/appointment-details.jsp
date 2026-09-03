@@ -156,6 +156,22 @@
                         <a class="btn btn--primary btn--block"
                            href="${ctx}/admin/billing?no=${appointment.appointmentNo}">Generate Bill</a>
                     </c:when>
+
+                    <%-- A visit that has not happened yet cannot be billed.
+                         Saying so is more useful than simply leaving a gap
+                         where the button would be. --%>
+                    <c:when test="${appointment.status.displayName eq 'Booked'}">
+                        <p class="hint">
+                            The figures above are an estimate. The bill can be produced
+                            once the visit has taken place and is marked as completed.
+                        </p>
+                    </c:when>
+
+                    <c:when test="${appointment.status.displayName eq 'Cancelled'}">
+                        <p class="hint">
+                            This appointment was cancelled, so there is nothing to bill.
+                        </p>
+                    </c:when>
                 </c:choose>
             </div>
         </section>

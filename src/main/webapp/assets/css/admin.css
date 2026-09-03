@@ -1788,3 +1788,242 @@ body.modal-open {
     border: 1px solid #b9f0e5;
     border-radius: 9px;
 }
+
+/* rows in the activity log that deserve attention */
+.row--flagged td {
+    background: #fffbeb;
+}
+
+.row--flagged td:first-child {
+    box-shadow: inset 3px 0 0 var(--warning);
+}
+
+/* =====================================================================
+   Sidebar scrolling
+   ---------------------------------------------------------------------
+   The menu grew to eleven items, so on a short window it has to scroll.
+   The browser's default scrollbar is a wide grey bar that looks wrong on
+   the dark navy panel, so it is restyled: thin, translucent, and only
+   noticeable while the pointer is over the menu.
+   ===================================================================== */
+
+.sidebar__nav {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .16) transparent;
+
+    /* room for the bar so it never sits on top of the labels */
+    padding-right: 8px;
+    overscroll-behavior: contain;
+}
+
+/* Chrome, Edge and Safari */
+.sidebar__nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar__nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar__nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .12);
+    border-radius: 999px;
+}
+
+/* Only fully visible while the pointer is in the menu, so the panel
+   stays clean when it is not being used. */
+.sidebar__nav:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .28);
+}
+
+.sidebar__nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 184, 166, .75);
+}
+
+/* ---------------------------------------------------------------------
+   A little tighter, so the whole menu fits without scrolling on a
+   normal laptop screen in the first place.
+   --------------------------------------------------------------------- */
+.sidebar__brand {
+    padding: 18px 20px;
+}
+
+.sidebar__nav {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.nav-group {
+    margin: 13px 10px 6px;
+}
+
+.nav-link {
+    padding: 8px 12px;
+    margin-bottom: 2px;
+    font-size: 13.5px;
+}
+
+.sidebar__foot {
+    padding: 12px 16px;
+}
+
+.signout-link {
+    padding: 9px 12px;
+    margin-bottom: 8px;
+}
+
+/* A short window, for example a laptop with the taskbar and browser
+   chrome taking space, is where the scrolling actually matters. */
+@media (max-height: 760px) {
+    .sidebar__brand {
+        padding: 14px 20px;
+    }
+
+    .nav-group {
+        margin: 10px 10px 4px;
+        font-size: 10px;
+    }
+
+    .nav-link {
+        padding: 7px 12px;
+        font-size: 13px;
+    }
+
+    .sidebar__version {
+        display: none;
+    }
+}
+
+/* SVG icons in the menu, replacing the old text characters */
+.nav-link__icon {
+    flex: 0 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .8;
+}
+
+.nav-link__icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.nav-link:hover .nav-link__icon,
+.nav-link.is-active .nav-link__icon {
+    opacity: 1;
+}
+
+.nav-link.is-active .nav-link__icon {
+    color: var(--teal-500);
+}
+
+/* SVG icons on the statistic cards and the quick action rows */
+.stat-card__icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.quick-action__icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.stat-card__icon,
+.quick-action__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* a destructive action shown as a link inside a table row */
+.link--danger {
+    color: var(--danger);
+}
+
+.link--danger:hover {
+    color: #b91c1c;
+    text-decoration: underline;
+}
+
+/* =====================================================================
+   Returning patient lookup on the appointment form
+   ===================================================================== */
+.patient-lookup {
+    position: relative;
+}
+
+.lookup-results {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 18px 36px -14px rgba(11, 31, 58, .35);
+}
+
+.lookup-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    padding: 10px 14px;
+    text-align: left;
+    font-family: inherit;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background .12s ease;
+}
+
+.lookup-row:last-child {
+    border-bottom: none;
+}
+
+.lookup-row:hover,
+.lookup-row:focus {
+    background: var(--teal-050);
+    outline: none;
+}
+
+.lookup-row strong {
+    font-size: 14px;
+    color: var(--ink-900);
+}
+
+.lookup-row small {
+    font-size: 12px;
+    color: var(--ink-400);
+}
+
+.lookup-empty {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink-400);
+}
+
+/* the banner shown once a record has been picked */
+.chosen-patient {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    color: #065f46;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+}
+
+.chosen-patient small {
+    color: #047857;
+}

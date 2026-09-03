@@ -76,6 +76,14 @@ public class DoctorServlet extends HttpServlet {
                 !"0".equals(request.getParameter("status")));
 
         if (result.isSuccess()) {
+            new com.sunrise.service.ActivityLogService().record(request,
+                    result.isNewRecord()
+                            ? com.sunrise.model.ActivityAction.DOCTOR_CREATED
+                            : com.sunrise.model.ActivityAction.DOCTOR_UPDATED,
+                    "Dentist", result.getDoctor().getDoctorName(),
+                    result.getSuccessMessage() + " Consultation fee LKR "
+                            + result.getDoctor().getFormattedFee());
+
             // Redirect after post, so a browser refresh cannot save twice.
             request.getSession().setAttribute("flashSuccess", result.getSuccessMessage());
             response.sendRedirect(request.getContextPath() + "/admin/doctors");
@@ -122,7 +130,7 @@ public class DoctorServlet extends HttpServlet {
         request.setAttribute("highestFeeText",
                 new java.text.DecimalFormat("#,##0").format(highestFee(doctors)));
         request.setAttribute("activePage", "doctors");
-        request.setAttribute("pageTitle", "Dentists");
+        request.setAttribute("pageTitle", "Dentists Management");
     }
 
     /** @return the highest consultation fee, for the statistic card */

@@ -47,12 +47,14 @@ public class AppointmentServlet extends HttpServlet {
 
     private transient AppointmentService appointmentService;
     private transient SlotService slotService;
+    private transient com.sunrise.service.ActivityLogService activityLog;
 
     @Override
     public void init() {
         this.appointmentService = new AppointmentService();
         this.slotService = new SlotService(
                 DaoFactory.getDoctorScheduleDao(), DaoFactory.getAppointmentDao());
+        this.activityLog = new com.sunrise.service.ActivityLogService();
     }
 
     @Override
@@ -170,12 +172,32 @@ public class AppointmentServlet extends HttpServlet {
 
         if (result.isSuccess()) {
             String number = result.getAppointment().getAppointmentNo();
+
+            activityLog.record(request, com.sunrise.model.ActivityAction.APPOINTMENT_CREATED,
+                    "Appointment", number,
+                    result.getAppointment().getPatient().getPatientName()
+                            + " with " + result.getAppointment().getDoctor().getDoctorName()
+                            + " on " + result.getAppointment().getFormattedDate()
+                            + " at " + result.getAppointment().getFormattedTime());
+
             request.getSession().setAttribute("flashSuccess",
                     "Appointment " + number + " registered successfully.");
             // Redirect after post, so a refresh cannot book the same visit twice.
             response.sendRedirect(request.getContextPath()
                     + "/admin/appointments/view?no=" + number);
             return;
+        }
+
+        // A refused double booking is worth recording: it is evidence the
+        // protection is working, and it shows how often it happens.
+        boolean slotTaken = result.getErrors().stream()
+                .anyMatch(error -> error.toLowerCase().contains("already booked"));
+        if (slotTaken) {
+            activityLog.record(request, com.sunrise.model.ActivityAction.APPOINTMENT_REFUSED,
+                    "Appointment", null,
+                    "Attempted booking refused: the dentist is already booked at "
+                            + request.getParameter("appointmentTime")
+                            + " on " + appointmentDate);
         }
 
         putFormDataOnRequest(request);
@@ -229,13 +251,31 @@ public class AppointmentServlet extends HttpServlet {
                 AppointmentStatus.fromString(request.getParameter("status"));
 
         if (appointmentService.updateStatus(appointmentId, status)) {
+            activityLog.record(request,
+                    status == AppointmentStatus.CANCELLED
+                            ? com.sunrise.model.ActivityAction.APPOINTMENT_CANCELLED
+                            : com.sunrise.model.ActivityAction.APPOINTMENT_COMPLETED,
+                    "Appointment", number,
+                    "Status changed to " + status.getDisplayName());
+
             request.getSession().setAttribute("flashSuccess",
-                    "The appointment is now marked as " + status.getDisplayName().toLowerCase() + ".");
+                    status == AppointmentStatus.CANCELLED
+                            ? "Appointment " + number + " was cancelled. "
+                              + "The time slot is free for another patient."
+                            : "Appointment " + number + " is now marked as "
+                              + status.getDisplayName().toLowerCase() + ".");
         } else {
             request.getSession().setAttribute("flashError",
                     "The status could not be changed. Please try again.");
         }
-        response.sendRedirect(request.getContextPath() + "/admin/appointments/view?no=" + number);
+
+        // Go back to wherever the staff member was. Cancelling from the list
+        // returns to the list; cancelling from the details page stays there.
+        String returnTo = request.getParameter("returnTo");
+
+        response.sendRedirect("list".equals(returnTo)
+                ? request.getContextPath() + "/admin/appointments"
+                : request.getContextPath() + "/admin/appointments/view?no=" + number);
     }
 
     // -----------------------------------------------------------------

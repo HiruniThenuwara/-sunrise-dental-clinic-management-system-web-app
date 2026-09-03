@@ -91,6 +91,18 @@ public class StaffServlet extends HttpServlet {
         }
 
         if (result.isSuccess()) {
+            // Anything that changes who can reach patient records is
+            // recorded, with the name of the administrator who did it.
+            new com.sunrise.service.ActivityLogService().record(request,
+                    switch (action == null ? "" : action) {
+                        case "toggle" -> com.sunrise.model.ActivityAction.STAFF_STATUS;
+                        case "password" -> com.sunrise.model.ActivityAction.STAFF_PASSWORD_RESET;
+                        case "edit" -> com.sunrise.model.ActivityAction.STAFF_UPDATED;
+                        default -> com.sunrise.model.ActivityAction.STAFF_CREATED;
+                    },
+                    "Staff account", result.getUser().getUsername(),
+                    successMessage(action, result));
+
             request.getSession().setAttribute("flashSuccess", successMessage(action, result));
             // Redirect after post, so a refresh cannot create the account twice.
             response.sendRedirect(request.getContextPath() + "/admin/staff");
@@ -109,8 +121,8 @@ public class StaffServlet extends HttpServlet {
 
         return switch (action == null ? "" : action) {
             case "toggle" -> result.getUser().isActive()
-                    ? name + " can sign in again."
-                    : name + " can no longer sign in.";
+                    ? name + " was activated and can sign in again."
+                    : name + " was deactivated and can no longer sign in.";
             case "password" -> "The password for " + name + " has been changed.";
             case "edit" -> name + " was updated.";
             default -> name + " was added as a "
@@ -148,7 +160,7 @@ public class StaffServlet extends HttpServlet {
         request.setAttribute("activeCount",
                 staff.stream().filter(User::isActive).count());
         request.setAttribute("activePage", "staff");
-        request.setAttribute("pageTitle", "Staff Accounts");
+        request.setAttribute("pageTitle", "Staff Management");
     }
 
     private User currentUser(HttpServletRequest request) {
