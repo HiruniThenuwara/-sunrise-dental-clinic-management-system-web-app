@@ -249,4 +249,67 @@ class AppointmentDaoImplTest {
                         appointmentDao.findByNumber("APT-20260914-001").orElseThrow().getStatus())
         );
     }
+
+    // -----------------------------------------------------------------
+    //  Paging
+    // -----------------------------------------------------------------
+
+    /** Stores 25 appointments across three days, newest last. */
+    private void storeManyAppointments() {
+        for (int i = 0; i < 25; i++) {
+            Appointment booking = appointment(
+                    String.format("APT-20260914-%03d", i + 1), 1,
+                    LocalTime.of(9, 0).plusMinutes(15L * i), "Patient " + (i + 1));
+            booking.setAppointmentDate(MONDAY.plusDays(i / 10));
+            appointmentDao.insert(booking);
+        }
+    }
+
+    @Test
+    @DisplayName("TC-12 a page holds only the rows asked for, and the count holds them all")
+    void readsOnePageAtATime() {
+        storeManyAppointments();
+
+        List<Appointment> first = appointmentDao.findPage(0, 10);
+        List<Appointment> last = appointmentDao.findPage(20, 10);
+
+        assertAll(
+                () -> assertEquals(25, appointmentDao.countAll()),
+                () -> assertEquals(10, first.size()),
+                () -> assertEquals(5, last.size(), "the last page is short"),
+                () -> assertTrue(appointmentDao.findPage(30, 10).isEmpty(),
+                        "past the end there is nothing to show")
+        );
+    }
+
+    @Test
+    @DisplayName("TC-13 consecutive pages neither repeat a row nor skip one")
+    void pagesDoNotOverlap() {
+        storeManyAppointments();
+
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int offset = 0; offset < 25; offset += 10) {
+            for (Appointment booking : appointmentDao.findPage(offset, 10)) {
+                assertTrue(seen.add(booking.getAppointmentNo()),
+                        booking.getAppointmentNo() + " appeared on two pages");
+            }
+        }
+        assertEquals(25, seen.size(), "every appointment was on exactly one page");
+    }
+
+    @Test
+    @DisplayName("TC-14 the badge counts come from the database, not from the page")
+    void countsByStatus() {
+        appointmentDao.insert(appointment("APT-20260914-001", 1, LocalTime.of(9, 0), "Saman"));
+        Appointment second = appointmentDao.insert(
+                appointment("APT-20260914-002", 1, LocalTime.of(9, 30), "Nimal"));
+        appointmentDao.updateStatus(second.getAppointmentId(), AppointmentStatus.COMPLETED);
+
+        assertAll(
+                () -> assertEquals(1, appointmentDao.countByStatus(AppointmentStatus.BOOKED)),
+                () -> assertEquals(1, appointmentDao.countByStatus(AppointmentStatus.COMPLETED)),
+                () -> assertEquals(0, appointmentDao.countByStatus(AppointmentStatus.CANCELLED)),
+                () -> assertEquals(0, appointmentDao.countByStatus(null))
+        );
+    }
 }

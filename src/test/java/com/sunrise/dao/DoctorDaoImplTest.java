@@ -198,4 +198,28 @@ class DoctorDaoImplTest {
                         "The table must still be there")
         );
     }
+
+    // -----------------------------------------------------------------
+    //  Paging
+    // -----------------------------------------------------------------
+
+    @Test
+    @DisplayName("TC-11 dentists are read one page at a time")
+    void readsOnePageOfDentists() {
+        for (int i = 0; i < 14; i++) {
+            Doctor doctor = new Doctor();
+            doctor.setDoctorName("Dr. Number " + (i + 1));
+            doctor.setSpecialization("General Dentistry");
+            doctor.setConsultationFee(new java.math.BigDecimal("1500.00"));
+            doctor.setActive(true);
+            doctorDao.insert(doctor);
+        }
+
+        assertAll(
+                () -> assertEquals(14, doctorDao.countAll()),
+                () -> assertEquals(10, doctorDao.findPage(0, 10).size()),
+                () -> assertEquals(4, doctorDao.findPage(10, 10).size()),
+                () -> assertTrue(doctorDao.findPage(20, 10).isEmpty())
+        );
+    }
 }

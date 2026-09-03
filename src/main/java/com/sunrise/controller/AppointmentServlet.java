@@ -1,5 +1,7 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
+import com.sunrise.dao.AppointmentDao;
 import com.sunrise.dao.DaoFactory;
 import com.sunrise.model.Appointment;
 import com.sunrise.model.AppointmentStatus;
@@ -105,14 +107,23 @@ public class AppointmentServlet extends HttpServlet {
                 request.setAttribute("flashError",
                         "No appointment found with the number " + searchNo.trim() + ".");
             }
+            request.setAttribute("appointments", appointments);
         } else {
-            appointments = appointmentService.findRecent(50);
+            // One page from the database rather than the fifty most recent.
+            AppointmentDao appointmentDao = DaoFactory.getAppointmentDao();
+            Page<Appointment> page = Page.of(request.getParameter("page"),
+                                             appointmentDao.countAll(),
+                                             appointmentDao::findPage);
+
+            request.setAttribute("appointments", page.getItems());
+            request.setAttribute("pageInfo", page);
         }
 
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("bookedCount", countWithStatus(appointments, AppointmentStatus.BOOKED));
-        request.setAttribute("completedCount", countWithStatus(appointments, AppointmentStatus.COMPLETED));
-        request.setAttribute("cancelledCount", countWithStatus(appointments, AppointmentStatus.CANCELLED));
+        // The badges count every appointment, not the ten on this page.
+        AppointmentDao counts = DaoFactory.getAppointmentDao();
+        request.setAttribute("bookedCount", counts.countByStatus(AppointmentStatus.BOOKED));
+        request.setAttribute("completedCount", counts.countByStatus(AppointmentStatus.COMPLETED));
+        request.setAttribute("cancelledCount", counts.countByStatus(AppointmentStatus.CANCELLED));
         request.setAttribute("activePage", "appointments");
         request.setAttribute("pageTitle", "All Appointments");
 

@@ -1,5 +1,6 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
 import com.sunrise.model.ActivityAction;
 import com.sunrise.model.User;
 import com.sunrise.service.ActivityLogService;
@@ -58,7 +59,18 @@ public class ActivityLogServlet extends HttpServlet {
         LocalDate from = parseDate(request.getParameter("from"), null);
         LocalDate to = parseDate(request.getParameter("to"), null);
 
-        request.setAttribute("entries", activityLogService.search(username, action, from, to));
+        // Both the page and its count carry the same filters, so the page
+        // links can never point at a page that the filter has emptied.
+        LocalDate fromDate = from;
+        LocalDate toDate = to;
+        Page<com.sunrise.model.ActivityLog> page = Page.of(
+                request.getParameter("page"),
+                activityLogService.countMatching(username, action, fromDate, toDate),
+                (offset, limit) -> activityLogService.searchPage(
+                        username, action, fromDate, toDate, offset, limit));
+
+        request.setAttribute("entries", page.getItems());
+        request.setAttribute("pageInfo", page);
         request.setAttribute("knownUsernames", activityLogService.knownUsernames());
         request.setAttribute("allActions", ActivityAction.values());
 

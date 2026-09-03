@@ -84,4 +84,26 @@ public interface AppointmentDao {
      * @return {@code true} if one row was changed
      */
     boolean updateStatus(int appointmentId, AppointmentStatus status);
+
+    /**
+     * One page of appointments, newest first.
+     *
+     * <p>The database returns only the rows the screen shows. Reading the
+     * whole table to display ten of it would grow slower every week the
+     * clinic stays open.</p>
+     *
+     * @param offset how many rows to skip
+     * @param limit  how many rows to return
+     */
+    List<Appointment> findPage(int offset, int limit);
+
+    /** @return how many appointments exist, for the page count */
+    int countAll();
+
+    /**
+     * @return how many appointments hold that status, for the badges above
+     *         the list. Counted in the database, because the screen now
+     *         holds one page rather than every row.
+     */
+    int countByStatus(AppointmentStatus status);
 }

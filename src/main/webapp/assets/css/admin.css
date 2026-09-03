@@ -1629,10 +1629,96 @@ body.modal-open {
 /* =====================================================================
    Print - only the receipt or report reaches the printer
    ===================================================================== */
+/* =====================================================================
+   Table pagination
+   ===================================================================== */
+.pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+}
+
+.pager__count {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ink-400);
+}
+
+.pager__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.pager__btn,
+.pager__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-600);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.pager__btn:hover:not(:disabled),
+.pager__page:hover:not(.is-current) {
+    color: var(--teal-600);
+    border-color: #b9f0e5;
+    background: var(--teal-050);
+}
+
+.pager__btn:disabled,
+.pager__btn.is-disabled {
+    color: var(--ink-400);
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+a.pager__btn:hover,
+a.pager__page:hover:not(.is-current) {
+    color: var(--teal-600);
+    border-color: #b9f0e5;
+    background: var(--teal-050);
+}
+
+.pager__page.is-current {
+    color: #fff;
+    background: var(--teal-600);
+    border-color: var(--teal-600);
+    cursor: default;
+}
+
+.pager__gap {
+    padding: 0 2px;
+    font-size: 12.5px;
+    color: var(--ink-400);
+}
+
+@media (max-width: 640px) {
+    .pager {
+        justify-content: center;
+    }
+}
+
 @media print {
     .sidebar,
     .topbar,
     .page-footer,
+    .pager,
     .notice,
     .no-print,
     .toast-host,
@@ -1650,6 +1736,11 @@ body.modal-open {
 
     .content {
         padding: 0;
+    }
+
+    /* A printed page showing ten rows out of forty would mislead. */
+    .table tbody tr[hidden] {
+        display: table-row !important;
     }
 
     .grid-2 {

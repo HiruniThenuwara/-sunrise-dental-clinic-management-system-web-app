@@ -1,5 +1,7 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
+import com.sunrise.dao.PatientDao;
 import com.sunrise.dao.DaoFactory;
 import com.sunrise.model.Appointment;
 import com.sunrise.model.PatientSummary;
@@ -59,18 +61,22 @@ public class PatientServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String search = request.getParameter("search");
-        List<PatientSummary> patients = DaoFactory.getPatientDao().findAllWithHistory(search);
+        PatientDao patientDao = DaoFactory.getPatientDao();
 
-        request.setAttribute("patients", patients);
+        // The search belongs on the SQL, not on the page of results:
+        // otherwise page two of a search would show the wrong people.
+        Page<PatientSummary> page = Page.of(
+                request.getParameter("page"),
+                patientDao.countWithHistory(search),
+                (offset, limit) -> patientDao.findPageWithHistory(search, offset, limit));
+
+        request.setAttribute("patients", page.getItems());
+        request.setAttribute("pageInfo", page);
         request.setAttribute("search", search);
-        request.setAttribute("totalCount", patients.size());
-        request.setAttribute("withUpcoming",
-                patients.stream().filter(PatientSummary::isUpcoming).count());
-        request.setAttribute("newPatients",
-                patients.stream().filter(PatientSummary::isNewPatient).count());
-        request.setAttribute("totalBilled", formatMoney(patients.stream()
-                .map(PatientSummary::getTotalBilled)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)));
+        request.setAttribute("totalCount", page.getTotalItems());
+        request.setAttribute("withUpcoming", patientDao.countWithUpcoming());
+        request.setAttribute("newPatients", patientDao.countFirstTime());
+        request.setAttribute("totalBilled", formatMoney(patientDao.totalBilled()));
 
         request.setAttribute("activePage", "patients");
         request.setAttribute("pageTitle", "Patients Management");
