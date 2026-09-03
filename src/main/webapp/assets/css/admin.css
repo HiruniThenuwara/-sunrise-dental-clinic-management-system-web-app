@@ -1145,6 +1145,40 @@ body.modal-open {
 
 /* A time earlier than now on today's date. Faded rather than struck
    through, so it reads as "gone" and not as "somebody has it". */
+/* The dentist's working days, listed under the dentist picker on the
+   appointment form. */
+.working-days {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.working-days__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-400);
+}
+
+.working-days__day {
+    padding: 3px 8px;
+    font-size: 12px;
+    color: var(--teal-600);
+    background: var(--teal-050);
+    border: 1px solid #b9f0e5;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.working-days__day strong {
+    margin-right: 3px;
+}
+
+.hint--warning {
+    color: var(--warning);
+}
+
 .slot-chip--past {
     color: var(--ink-400);
     background: #fff;

@@ -49,6 +49,31 @@
                         </option>
                     </c:forEach>
                 </select>
+
+                <%-- Which days this dentist works. It sits under the picker
+                     because the date box comes next: without it the choice
+                     is a guess, answered by "not working on this day". --%>
+                <c:if test="${chosenDoctorId gt 0}">
+                    <div class="working-days">
+                        <c:choose>
+                            <c:when test="${empty workingDays}">
+                                <p class="hint hint--warning">
+                                    No working hours are set for this dentist. Ask an
+                                    administrator to set them on the Schedule screen.
+                                </p>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="working-days__label">Available on</span>
+                                <c:forEach var="day" items="${workingDays}">
+                                    <span class="working-days__day">
+                                        <strong><c:out value="${day.shortDayName}"/></strong>
+                                        <c:out value="${day.formattedHours}"/>
+                                    </span>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </c:if>
             </div>
             <div class="form-field">
                 <label for="pickDate">Date <span class="required">*</span></label>

@@ -104,8 +104,9 @@
             <span class="stat-card__icon stat-card__icon--amber">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 3.5h14v17l-2.3-1.6-2.3 1.6-2.4-1.6L9.6 20.5 7.3 19 5 20.5z"/>
-                    <path d="M9 8.5h6M9 12h6"/>
+                    <rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
+                    <circle cx="12" cy="12" r="2.6"/>
+                    <path d="M6 9.6v4.8M18 9.6v4.8"/>
                 </svg>
             </span>
         </div>
