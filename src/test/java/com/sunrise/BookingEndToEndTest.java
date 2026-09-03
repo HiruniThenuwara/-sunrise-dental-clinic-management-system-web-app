@@ -22,8 +22,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,8 +59,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("End to end - book a visit, find it, bill it")
 class BookingEndToEndTest {
 
-    /** 14 September 2026 is a Monday, the day the dentist works. */
-    private static final LocalDate MONDAY = LocalDate.of(2026, 9, 14);
+    /**
+     * A Monday, the day the dentist works, always a week or more ahead.
+     *
+     * <p>It is calculated rather than written down because the booking rules
+     * refuse a time that has gone by. A fixed calendar date would one day be
+     * today, and this test would then start failing every afternoon for a
+     * reason that has nothing to do with the workflow it checks.</p>
+     */
+    private static final LocalDate MONDAY = LocalDate.now()
+            .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+            .plusWeeks(1);
 
     private TestDatabase database;
     private AppointmentService appointmentService;

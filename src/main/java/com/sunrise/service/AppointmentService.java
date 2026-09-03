@@ -127,7 +127,18 @@ public class AppointmentService {
         int treatmentId = Integer.parseInt(treatmentIdText.trim());
         LocalTime appointmentTime = LocalTime.parse(appointmentTimeText.trim());
 
-        // 2. The double booking check, before anything is written.
+        // 2. A time that has already gone by cannot be booked. This is
+        //    checked before the availability check so the staff member is
+        //    told the real problem: at 14:00 this morning's 09:00 slot is
+        //    not "already booked", it is simply over.
+        if (slotService.hasPassed(appointmentDate, appointmentTime)) {
+            LOGGER.warning("Refused a booking in the past: " + appointmentDate
+                    + " at " + appointmentTime);
+            return RegistrationResult.failed(List.of(
+                    "That time has already passed. Please choose a later time slot."));
+        }
+
+        // 3. The double booking check, before anything is written.
         if (!slotService.isSlotAvailable(doctorId, appointmentDate, appointmentTime)) {
             LOGGER.warning("Refused a double booking: dentist " + doctorId
                     + " on " + appointmentDate + " at " + appointmentTime);
@@ -135,12 +146,12 @@ public class AppointmentService {
                     "That time is already booked for this dentist. Please choose another slot."));
         }
 
-        // 3. A returning patient keeps their existing record, matched on the
+        // 4. A returning patient keeps their existing record, matched on the
         //    telephone number, so the same person is not stored twice.
         Patient patient = findOrCreatePatient(
                 patientName, address, contactNumber, email, nic, genderText);
 
-        // 4. Build and store the appointment.
+        // 5. Build and store the appointment.
         Appointment appointment = new Appointment();
         appointment.setAppointmentNo(generateAppointmentNumber(appointmentDate));
         appointment.setPatient(patient);

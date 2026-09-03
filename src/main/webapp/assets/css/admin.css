@@ -1143,6 +1143,21 @@ body.modal-open {
     background: #f1f5f9;
 }
 
+/* A time earlier than now on today's date. Faded rather than struck
+   through, so it reads as "gone" and not as "somebody has it". */
+.slot-chip--past {
+    color: var(--ink-400);
+    background: #fff;
+    border-color: var(--line);
+    border-style: dashed;
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.slot-chip--past:hover {
+    background: #fff;
+}
+
 .legend {
     display: flex;
     gap: 16px;
@@ -1169,6 +1184,11 @@ body.modal-open {
 .legend__dot--booked {
     background: #f1f5f9;
     border: 1px solid var(--line);
+}
+
+.legend__dot--past {
+    background: #fff;
+    border: 1px dashed var(--ink-400);
 }
 
 .legend__dot--selected {

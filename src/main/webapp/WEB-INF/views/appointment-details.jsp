@@ -114,9 +114,9 @@
                     <dt>Appointment Date</dt>
                     <dd><c:out value="${appointment.formattedDate}"/></dd>
 
-                    <dt>Appointment Time</dt>
-                    <dd><c:out value="${appointment.formattedTime}"/>
-                        <span class="muted">(${appointment.treatment.estimatedMinutes} minutes)</span></dd>
+                    <%-- The time is not repeated here. It is already
+                         shown in the strip at the top of the page, and
+                         once is enough for a single visit. --%>
 
                     <dt>Booked As</dt>
                     <dd><span class="badge badge--${appointment.bookingType.badgeStyle}">
