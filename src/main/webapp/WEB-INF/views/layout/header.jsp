@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><c:out value="${pageTitle}"/> | Sunrise Dental Clinic</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css?v=13">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css?v=15">
 </head>
 <body>
 
@@ -42,9 +42,13 @@
 
             <div class="topbar__right">
                 <div class="user-chip">
-                    <span class="user-chip__avatar">
-                        <c:out value="${sessionScope.user.initials}"/>
-                    </span>
+                    <%-- The profile picture says which kind of account is
+                         signed in, which is the thing that decides what the
+                         menu offers and what the servlets will allow. --%>
+                    <jsp:include page="/WEB-INF/views/layout/role-avatar.jsp">
+                        <jsp:param name="role" value="${sessionScope.user.role}"/>
+                        <jsp:param name="styleClass" value="user-chip__avatar"/>
+                    </jsp:include>
                     <span class="user-chip__text">
                         <strong><c:out value="${sessionScope.user.fullName}"/></strong>
                         <small><c:out value="${sessionScope.user.role.displayName}"/></small>

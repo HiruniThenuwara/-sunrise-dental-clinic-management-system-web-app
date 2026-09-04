@@ -96,7 +96,9 @@
                 <tr>
                     <td>
                         <div class="patient-cell">
-                            <span class="avatar"><c:out value="${member.initials}"/></span>
+                            <jsp:include page="/WEB-INF/views/layout/role-avatar.jsp">
+                                <jsp:param name="role" value="${member.role}"/>
+                            </jsp:include>
                             <div>
                                 <strong><c:out value="${member.fullName}"/></strong>
                                 <c:if test="${member.userId eq sessionScope.user.userId}">
