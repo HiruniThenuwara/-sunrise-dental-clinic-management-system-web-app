@@ -247,4 +247,86 @@ public class ActivityLogDaoImpl implements ActivityLogDao {
         }
         return entry;
     }
+
+    @Override
+    public List<ActivityLog> searchPage(String username, String action,
+                                        LocalDate from, LocalDate to,
+                                        int offset, int limit) {
+
+        StringBuilder sql = new StringBuilder("SELECT " + COLUMNS + " FROM activity_log WHERE 1 = 1");
+        List<Object> parameters = new ArrayList<>();
+        appendFilters(sql, parameters, username, action, from, to);
+
+        sql.append(" ORDER BY created_at DESC, log_id DESC LIMIT ? OFFSET ?");
+        parameters.add(Math.max(limit, 1));
+        parameters.add(Math.max(offset, 0));
+
+        List<ActivityLog> entries = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                statement.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    entries.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read a page of the activity log", e);
+        }
+        return entries;
+    }
+
+    @Override
+    public int countSearch(String username, String action, LocalDate from, LocalDate to) {
+
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM activity_log WHERE 1 = 1");
+        List<Object> parameters = new ArrayList<>();
+        appendFilters(sql, parameters, username, action, from, to);
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                statement.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the activity log", e);
+            return 0;
+        }
+    }
+
+    /**
+     * Builds the WHERE clause shared by the page query and the count query.
+     * Written once so the two can never disagree about what is being
+     * counted, which would put a page link where there is no page.
+     */
+    private void appendFilters(StringBuilder sql, List<Object> parameters,
+                               String username, String action,
+                               LocalDate from, LocalDate to) {
+        if (isPresent(username)) {
+            sql.append(" AND username = ?");
+            parameters.add(username.trim());
+        }
+        if (isPresent(action)) {
+            sql.append(" AND action = ?");
+            parameters.add(action.trim());
+        }
+        if (from != null) {
+            sql.append(" AND created_at >= ?");
+            parameters.add(Timestamp.valueOf(from.atStartOfDay()));
+        }
+        if (to != null) {
+            sql.append(" AND created_at < ?");
+            parameters.add(Timestamp.valueOf(to.plusDays(1).atStartOfDay()));
+        }
+    }
 }

@@ -97,4 +97,16 @@ public interface UserDao {
      * @return {@code true} when the name is already in use
      */
     boolean usernameExists(String username, int excludeUserId);
+
+    /** One page of staff accounts, administrators first. */
+    List<User> findPage(int offset, int limit);
+
+    /** @return how many staff accounts exist, for the page count */
+    int countAll();
+
+    /** @return how many accounts hold that role */
+    int countByRole(com.sunrise.model.Role role);
+
+    /** @return how many accounts can still sign in */
+    int countActive();
 }

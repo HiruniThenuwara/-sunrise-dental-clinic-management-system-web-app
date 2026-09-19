@@ -79,7 +79,7 @@
     </header>
 
     <div class="table-wrap">
-        <table class="table">
+        <table class="table" data-no-pager>
             <thead>
             <tr>
                 <th>Staff Member</th>
@@ -96,7 +96,9 @@
                 <tr>
                     <td>
                         <div class="patient-cell">
-                            <span class="avatar"><c:out value="${member.initials}"/></span>
+                            <jsp:include page="/WEB-INF/views/layout/role-avatar.jsp">
+                                <jsp:param name="role" value="${member.role}"/>
+                            </jsp:include>
                             <div>
                                 <strong><c:out value="${member.fullName}"/></strong>
                                 <c:if test="${member.userId eq sessionScope.user.userId}">
@@ -161,13 +163,9 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            An account is never deleted. Deactivating it stops the person signing in
-            while keeping their name on the appointments they registered and the
-            bills they took payment for.
-        </p>
-    </footer>
+    <%-- Page links. The servlet put the page on the request as pageInfo. --%>
+    <jsp:include page="/WEB-INF/views/layout/pager.jsp"/>
+
 </section>
 
 <%-- ================= create / edit staff modal ================= --%>

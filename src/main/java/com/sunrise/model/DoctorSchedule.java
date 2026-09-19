@@ -3,6 +3,7 @@ package com.sunrise.model;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalTime;
 
 /**
@@ -17,6 +18,9 @@ import java.time.LocalTime;
  * shown in the class diagram.</p>
  */
 public class DoctorSchedule implements Serializable {
+
+    /** Hours are shown the way the clinic writes them, not as 17:00. */
+    private static final DateTimeFormatter CLOCK = DateTimeFormatter.ofPattern("hh:mm a");
 
     private static final long serialVersionUID = 1L;
 
@@ -111,6 +115,26 @@ public class DoctorSchedule implements Serializable {
         }
         long workingMinutes = Duration.between(startTime, endTime).toMinutes();
         return (int) (workingMinutes / slotDurationMinutes);
+    }
+
+    /**
+     * @return the weekday shortened for a crowded line, for example "Mon"
+     */
+    public String getShortDayName() {
+        String name = getDayName();
+        return name.length() <= 3 ? name : name.substring(0, 3);
+    }
+
+    /**
+     * @return the working hours as staff read them, for example
+     *         "09:00 AM - 05:00 PM", or an empty string when the hours are
+     *         not set
+     */
+    public String getFormattedHours() {
+        if (startTime == null || endTime == null) {
+            return "";
+        }
+        return startTime.format(CLOCK) + " - " + endTime.format(CLOCK);
     }
 
     /** @return the weekday name shown in the interface, for example "Monday" */

@@ -4,13 +4,15 @@
 --%>
         </main><%-- .content --%>
 
-        <footer class="page-footer">
-            <p>Sunrise Dental Clinic Management System &middot; CIS6003 Advanced Programming</p>
-            <p class="muted">Handle patient data with care. Do not leave this screen unattended.</p>
-        </footer>
+        <%-- The footer strip was removed. It repeated the system name on
+             every screen and said nothing the staff member needed. --%>
 
     </div><%-- .main --%>
 </div><%-- .layout --%>
+
+<%-- Pagination for every list table. Loaded here so that a new screen
+     gets it without remembering to add anything. --%>
+<script src="${pageContext.request.contextPath}/assets/js/table-pager.js?v=1"></script>
 
 <script>
     // Close the mobile menu when a menu item is tapped.

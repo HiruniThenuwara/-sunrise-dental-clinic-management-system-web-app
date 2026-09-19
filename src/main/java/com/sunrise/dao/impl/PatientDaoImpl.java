@@ -297,4 +297,111 @@ public class PatientDaoImpl implements PatientDao {
         patient.setGender(Gender.fromString(resultSet.getString("gender")));
         return patient;
     }
+
+    @Override
+    public List<PatientSummary> findPageWithHistory(String search, int offset, int limit) {
+        List<PatientSummary> summaries = new ArrayList<>();
+
+        boolean filtered = search != null && !search.isBlank();
+        String sql = WITH_HISTORY
+                + (filtered ? "WHERE p.patient_name LIKE ? OR p.contact_number LIKE ? "
+                            + "OR p.nic LIKE ? " : "")
+                + GROUP_AND_ORDER + " LIMIT ? OFFSET ?";
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            int index = 1;
+            if (filtered) {
+                String term = "%" + search.trim() + "%";
+                statement.setString(index++, term);
+                statement.setString(index++, term);
+                statement.setString(index++, term);
+            }
+            statement.setInt(index++, Math.max(limit, 1));
+            statement.setInt(index, Math.max(offset, 0));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    summaries.add(mapSummary(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read a page of patients", e);
+        }
+        return summaries;
+    }
+
+    @Override
+    public int countWithHistory(String search) {
+        boolean filtered = search != null && !search.isBlank();
+        String sql = "SELECT COUNT(*) FROM patients p"
+                + (filtered ? " WHERE p.patient_name LIKE ? OR p.contact_number LIKE ? "
+                            + "OR p.nic LIKE ?" : "");
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            if (filtered) {
+                String term = "%" + search.trim() + "%";
+                statement.setString(1, term);
+                statement.setString(2, term);
+                statement.setString(3, term);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the patients", e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int countWithUpcoming() {
+        return single("SELECT COUNT(DISTINCT patient_id) FROM appointments "
+                      + "WHERE appointment_date > CURRENT_DATE AND status = 'BOOKED'",
+                      "Could not count the patients with a visit to come");
+    }
+
+    @Override
+    public int countFirstTime() {
+        return single("SELECT COUNT(*) FROM ("
+                      + "  SELECT p.patient_id FROM patients p "
+                      + "  LEFT JOIN appointments a ON a.patient_id = p.patient_id "
+                      + "  GROUP BY p.patient_id HAVING COUNT(a.appointment_id) <= 1"
+                      + ") first_timers",
+                      "Could not count the first time patients");
+    }
+
+    @Override
+    public java.math.BigDecimal totalBilled() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT COALESCE(SUM(total_amount), 0) FROM bills");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                java.math.BigDecimal value = resultSet.getBigDecimal(1);
+                return value == null ? java.math.BigDecimal.ZERO : value;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not total the bills", e);
+        }
+        return java.math.BigDecimal.ZERO;
+    }
+
+    /** Runs a query that returns one whole number. */
+    private int single(String sql, String failureMessage) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, failureMessage, e);
+            return 0;
+        }
+    }
 }

@@ -117,7 +117,7 @@
     </header>
 
     <div class="table-wrap">
-        <table class="table">
+        <table class="table" data-no-pager>
             <thead>
             <tr>
                 <th>When</th>
@@ -125,7 +125,6 @@
                 <th>Action</th>
                 <th>Record</th>
                 <th>Details</th>
-                <th>From</th>
             </tr>
             </thead>
             <tbody>
@@ -158,13 +157,12 @@
                         </c:choose>
                     </td>
                     <td class="cell-sub"><c:out value="${entry.details}"/></td>
-                    <td class="cell-sub mono"><c:out value="${entry.ipAddress}"/></td>
                 </tr>
             </c:forEach>
 
             <c:if test="${empty entries}">
                 <tr>
-                    <td colspan="6">
+                    <td colspan="5">
                         <div class="empty-state">
                             <p class="empty-state__title">Nothing recorded yet</p>
                             <p class="empty-state__text">
@@ -182,13 +180,9 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            The log is append only. Entries cannot be edited or deleted from this
-            screen, which is what makes it usable as evidence. Failed sign ins and
-            changes to who can reach patient records are highlighted.
-        </p>
-    </footer>
+    <%-- Page links. The servlet put the page on the request as pageInfo. --%>
+    <jsp:include page="/WEB-INF/views/layout/pager.jsp"/>
+
 </section>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

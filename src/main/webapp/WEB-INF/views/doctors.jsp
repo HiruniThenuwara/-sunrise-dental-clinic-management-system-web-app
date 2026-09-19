@@ -88,7 +88,7 @@
     </header>
 
     <div class="table-wrap">
-        <table class="table" id="doctorTable">
+        <table class="table" id="doctorTable" data-no-pager>
             <thead>
             <tr>
                 <th>Dentist</th>
@@ -170,12 +170,9 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            A dentist is never deleted. Deactivating removes them from the appointment
-            form while keeping their name on every past appointment and bill.
-        </p>
-    </footer>
+    <%-- Page links. The servlet put the page on the request as pageInfo. --%>
+    <jsp:include page="/WEB-INF/views/layout/pager.jsp"/>
+
 </section>
 
 <%-- ================= add / edit dentist modal ================= --%>

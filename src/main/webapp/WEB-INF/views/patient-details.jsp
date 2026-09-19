@@ -129,16 +129,10 @@
                     <dt>NIC Number</dt>
                     <dd class="mono"><c:out value="${empty patient.nic ? '-' : patient.nic}"/></dd>
 
-                    <dt>Date of Birth</dt>
-                    <dd>
-                        <c:choose>
-                            <c:when test="${empty patient.dateOfBirth}">-</c:when>
-                            <c:otherwise>
-                                <c:out value="${patient.dateOfBirth}"/>
-                                <span class="muted">(${patient.age} years)</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </dd>
+                    <%-- Date of birth is not shown. The appointment form does
+                         not collect it, so the row was always empty. The
+                         column is kept in the database for a later release
+                         that asks for it. --%>
 
                     <dt>Gender</dt>
                     <dd>

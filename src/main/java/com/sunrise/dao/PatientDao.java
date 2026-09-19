@@ -87,4 +87,22 @@ public interface PatientDao {
      *         patient does not exist
      */
     Optional<PatientSummary> findSummaryById(int patientId);
+
+    /**
+     * One page of patient records with their visit history, matching the
+     * same search the screen offers.
+     */
+    List<PatientSummary> findPageWithHistory(String search, int offset, int limit);
+
+    /** @return how many patients match that search, for the page count */
+    int countWithHistory(String search);
+
+    /** @return how many patients have a visit still to come */
+    int countWithUpcoming();
+
+    /** @return how many patients have been to the clinic once or not at all */
+    int countFirstTime();
+
+    /** @return every rupee actually billed, across all patients */
+    java.math.BigDecimal totalBilled();
 }

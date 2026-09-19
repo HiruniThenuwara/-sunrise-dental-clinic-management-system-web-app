@@ -72,6 +72,8 @@ public class PatientApi extends HttpServlet {
                 .name("address").value(match.getPatient().getAddress())
                 .name("email").value(match.getPatient().getEmail())
                 .name("nic").value(match.getPatient().getNic())
+                .name("gender").value(match.getPatient().getGender() == null
+                        ? null : match.getPatient().getGender().name())
                 .name("visits").value(match.getVisitCount())
                 .name("lastVisit").value(match.getFormattedLastVisit())
             .endObject());

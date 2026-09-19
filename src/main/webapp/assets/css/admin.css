@@ -242,6 +242,41 @@ a {
     background: linear-gradient(135deg, var(--teal-600), var(--teal-500));
 }
 
+/* The role drawings. The colour repeats what the shape says, for anyone
+   who cannot make out a 20 pixel icon. */
+.user-chip__avatar svg,
+.avatar svg {
+    width: 19px;
+    height: 19px;
+}
+
+.avatar.avatar--admin,
+.user-chip__avatar.avatar--admin {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--teal-600), var(--teal-500));
+}
+
+.avatar.avatar--reception,
+.user-chip__avatar.avatar--reception {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+}
+
+/* Read by a screen reader, never drawn. */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .user-chip__text {
     display: flex;
     flex-direction: column;
@@ -982,16 +1017,6 @@ textarea.input {
     margin-bottom: 0;
 }
 
-.panel__foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding: 14px 20px;
-    border-top: 1px solid var(--line);
-    background: #fbfdff;
-}
 
 .pager {
     display: flex;
@@ -1143,6 +1168,55 @@ body.modal-open {
     background: #f1f5f9;
 }
 
+/* A time earlier than now on today's date. Faded rather than struck
+   through, so it reads as "gone" and not as "somebody has it". */
+/* The dentist's working days, listed under the dentist picker on the
+   appointment form. */
+.working-days {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.working-days__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-400);
+}
+
+.working-days__day {
+    padding: 3px 8px;
+    font-size: 12px;
+    color: var(--teal-600);
+    background: var(--teal-050);
+    border: 1px solid #b9f0e5;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.working-days__day strong {
+    margin-right: 3px;
+}
+
+.hint--warning {
+    color: var(--warning);
+}
+
+.slot-chip--past {
+    color: var(--ink-400);
+    background: #fff;
+    border-color: var(--line);
+    border-style: dashed;
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.slot-chip--past:hover {
+    background: #fff;
+}
+
 .legend {
     display: flex;
     gap: 16px;
@@ -1169,6 +1243,11 @@ body.modal-open {
 .legend__dot--booked {
     background: #f1f5f9;
     border: 1px solid var(--line);
+}
+
+.legend__dot--past {
+    background: #fff;
+    border: 1px dashed var(--ink-400);
 }
 
 .legend__dot--selected {
@@ -1585,10 +1664,96 @@ body.modal-open {
 /* =====================================================================
    Print - only the receipt or report reaches the printer
    ===================================================================== */
+/* =====================================================================
+   Table pagination
+   ===================================================================== */
+.pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+}
+
+.pager__count {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ink-400);
+}
+
+.pager__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.pager__btn,
+.pager__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-600);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.pager__btn:hover:not(:disabled),
+.pager__page:hover:not(.is-current) {
+    color: var(--teal-600);
+    border-color: #b9f0e5;
+    background: var(--teal-050);
+}
+
+.pager__btn:disabled,
+.pager__btn.is-disabled {
+    color: var(--ink-400);
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+a.pager__btn:hover,
+a.pager__page:hover:not(.is-current) {
+    color: var(--teal-600);
+    border-color: #b9f0e5;
+    background: var(--teal-050);
+}
+
+.pager__page.is-current {
+    color: #fff;
+    background: var(--teal-600);
+    border-color: var(--teal-600);
+    cursor: default;
+}
+
+.pager__gap {
+    padding: 0 2px;
+    font-size: 12.5px;
+    color: var(--ink-400);
+}
+
+@media (max-width: 640px) {
+    .pager {
+        justify-content: center;
+    }
+}
+
 @media print {
     .sidebar,
     .topbar,
     .page-footer,
+    .pager,
     .notice,
     .no-print,
     .toast-host,
@@ -1606,6 +1771,11 @@ body.modal-open {
 
     .content {
         padding: 0;
+    }
+
+    /* A printed page showing ten rows out of forty would mislead. */
+    .table tbody tr[hidden] {
+        display: table-row !important;
     }
 
     .grid-2 {
@@ -2010,6 +2180,13 @@ body.modal-open {
 }
 
 /* the banner shown once a record has been picked */
+/* The hidden attribute must win over any component's own display value.
+   Without this, .chosen-patient { display: flex } drew an empty green bar
+   on every new appointment form. */
+[hidden] {
+    display: none !important;
+}
+
 .chosen-patient {
     display: flex;
     align-items: center;

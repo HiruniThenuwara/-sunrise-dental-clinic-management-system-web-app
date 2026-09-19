@@ -1,8 +1,11 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
+import com.sunrise.dao.AppointmentDao;
 import com.sunrise.dao.DaoFactory;
 import com.sunrise.model.Appointment;
 import com.sunrise.model.AppointmentStatus;
+import com.sunrise.model.DoctorSchedule;
 import com.sunrise.model.User;
 import com.sunrise.service.AppointmentService;
 import com.sunrise.service.AuthService;
@@ -19,6 +22,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Appointment screens (Requirements 2 and 3).
@@ -103,14 +107,23 @@ public class AppointmentServlet extends HttpServlet {
                 request.setAttribute("flashError",
                         "No appointment found with the number " + searchNo.trim() + ".");
             }
+            request.setAttribute("appointments", appointments);
         } else {
-            appointments = appointmentService.findRecent(50);
+            // One page from the database rather than the fifty most recent.
+            AppointmentDao appointmentDao = DaoFactory.getAppointmentDao();
+            Page<Appointment> page = Page.of(request.getParameter("page"),
+                                             appointmentDao.countAll(),
+                                             appointmentDao::findPage);
+
+            request.setAttribute("appointments", page.getItems());
+            request.setAttribute("pageInfo", page);
         }
 
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("bookedCount", countWithStatus(appointments, AppointmentStatus.BOOKED));
-        request.setAttribute("completedCount", countWithStatus(appointments, AppointmentStatus.COMPLETED));
-        request.setAttribute("cancelledCount", countWithStatus(appointments, AppointmentStatus.CANCELLED));
+        // The badges count every appointment, not the ten on this page.
+        AppointmentDao counts = DaoFactory.getAppointmentDao();
+        request.setAttribute("bookedCount", counts.countByStatus(AppointmentStatus.BOOKED));
+        request.setAttribute("completedCount", counts.countByStatus(AppointmentStatus.COMPLETED));
+        request.setAttribute("cancelledCount", counts.countByStatus(AppointmentStatus.CANCELLED));
         request.setAttribute("activePage", "appointments");
         request.setAttribute("pageTitle", "All Appointments");
 
@@ -145,6 +158,15 @@ public class AppointmentServlet extends HttpServlet {
 
         if (chosenDoctorId > 0) {
             request.setAttribute("slots", slotService.generateSlots(chosenDoctorId, chosenDate));
+
+            // The days this dentist actually works, shown under the picker.
+            // Without it the receptionist chooses a date, is told "not
+            // working on this day", and guesses again.
+            request.setAttribute("workingDays",
+                    DaoFactory.getDoctorScheduleDao().findByDoctor(chosenDoctorId).stream()
+                            .filter(DoctorSchedule::isActive)
+                            .filter(schedule -> schedule.getSlotCount() > 0)
+                            .collect(Collectors.toList()));
         }
 
         request.setAttribute("activePage", "new-appointment");
@@ -163,10 +185,12 @@ public class AppointmentServlet extends HttpServlet {
                 request.getParameter("contactNumber"),
                 request.getParameter("email"),
                 request.getParameter("nic"),
+                request.getParameter("gender"),
                 request.getParameter("doctorId"),
                 request.getParameter("treatmentId"),
                 appointmentDate,
                 request.getParameter("appointmentTime"),
+                request.getParameter("bookingType"),
                 request.getParameter("notes"),
                 currentUser(request));
 
@@ -207,6 +231,8 @@ public class AppointmentServlet extends HttpServlet {
         request.setAttribute("formContact", request.getParameter("contactNumber"));
         request.setAttribute("formEmail", request.getParameter("email"));
         request.setAttribute("formNic", request.getParameter("nic"));
+        request.setAttribute("formGender", request.getParameter("gender"));
+        request.setAttribute("formBookingType", request.getParameter("bookingType"));
         request.setAttribute("formNotes", request.getParameter("notes"));
         request.setAttribute("formTreatmentId", parseId(request.getParameter("treatmentId")));
         request.setAttribute("formTime", request.getParameter("appointmentTime"));

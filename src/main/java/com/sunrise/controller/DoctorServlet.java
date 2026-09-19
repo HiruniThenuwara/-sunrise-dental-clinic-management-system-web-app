@@ -1,5 +1,8 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
+import com.sunrise.dao.DoctorDao;
+import com.sunrise.dao.DaoFactory;
 import com.sunrise.model.Doctor;
 import com.sunrise.service.DoctorService;
 
@@ -120,15 +123,25 @@ public class DoctorServlet extends HttpServlet {
         }
     }
 
-    /** Loads the dentist list and the statistic card values. */
+    /**
+     * Loads one page of dentists and the statistic card values.
+     *
+     * <p>The cards are counted in the database rather than from the rows on
+     * screen. Counting the rows would make the cards describe the page
+     * instead of the clinic.</p>
+     */
     private void putListOnRequest(HttpServletRequest request) {
-        List<Doctor> doctors = doctorService.findAll();
+        DoctorDao doctorDao = DaoFactory.getDoctorDao();
 
-        request.setAttribute("doctors", doctors);
+        Page<Doctor> page = Page.of(request.getParameter("page"), doctorDao.countAll(),
+                                    doctorDao::findPage);
+
+        request.setAttribute("doctors", page.getItems());
+        request.setAttribute("pageInfo", page);
         request.setAttribute("activeCount", doctorService.countActive());
-        request.setAttribute("totalCount", doctors.size());
+        request.setAttribute("totalCount", page.getTotalItems());
         request.setAttribute("highestFeeText",
-                new java.text.DecimalFormat("#,##0").format(highestFee(doctors)));
+                new java.text.DecimalFormat("#,##0").format(doctorDao.highestFee()));
         request.setAttribute("activePage", "doctors");
         request.setAttribute("pageTitle", "Dentists Management");
     }

@@ -75,7 +75,7 @@
     </header>
 
     <div class="table-wrap">
-        <table class="table" id="treatmentTable">
+        <table class="table" id="treatmentTable" data-no-pager>
             <thead>
             <tr>
                 <th>Treatment</th>
@@ -142,13 +142,9 @@
         </table>
     </div>
 
-    <footer class="panel__foot">
-        <p class="hint">
-            An inactive treatment stays on old appointments and old bills, but the
-            receptionist can no longer choose it for a new appointment. Nothing is
-            deleted, so past records and their totals never change.
-        </p>
-    </footer>
+    <%-- Page links. The servlet put the page on the request as pageInfo. --%>
+    <jsp:include page="/WEB-INF/views/layout/pager.jsp"/>
+
 </section>
 
 <%-- ================= add / edit treatment modal ================= --%>

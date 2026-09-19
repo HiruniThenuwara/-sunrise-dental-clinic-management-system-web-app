@@ -64,6 +64,10 @@ function showToast(message, type) {
 
 /** Highlights the time slot the receptionist clicked. */
 function selectSlot(button) {
+    if (button.classList.contains('slot-chip--past')) {
+        showToast('That time has already passed today. Please choose a later slot.', 'error');
+        return;
+    }
     if (button.classList.contains('slot-chip--booked')) {
         showToast('That time is already booked. Please choose another slot.', 'error');
         return;

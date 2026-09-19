@@ -1,5 +1,8 @@
 package com.sunrise.controller;
 
+import com.sunrise.model.Page;
+import com.sunrise.dao.UserDao;
+import com.sunrise.dao.DaoFactory;
 import com.sunrise.model.Role;
 import com.sunrise.model.User;
 import com.sunrise.service.AuthService;
@@ -149,16 +152,17 @@ public class StaffServlet extends HttpServlet {
     }
 
     private void putListOnRequest(HttpServletRequest request) {
-        List<User> staff = staffService.findAll();
+        UserDao userDao = DaoFactory.getUserDao();
 
-        request.setAttribute("staff", staff);
-        request.setAttribute("totalCount", staff.size());
-        request.setAttribute("adminCount",
-                staff.stream().filter(User::isAdmin).count());
-        request.setAttribute("receptionistCount",
-                staff.stream().filter(u -> u.getRole() == Role.RECEPTIONIST).count());
-        request.setAttribute("activeCount",
-                staff.stream().filter(User::isActive).count());
+        Page<User> page = Page.of(request.getParameter("page"), userDao.countAll(),
+                                  userDao::findPage);
+
+        request.setAttribute("staff", page.getItems());
+        request.setAttribute("pageInfo", page);
+        request.setAttribute("totalCount", page.getTotalItems());
+        request.setAttribute("adminCount", userDao.countByRole(Role.ADMIN));
+        request.setAttribute("receptionistCount", userDao.countByRole(Role.RECEPTIONIST));
+        request.setAttribute("activeCount", userDao.countActive());
         request.setAttribute("activePage", "staff");
         request.setAttribute("pageTitle", "Staff Management");
     }

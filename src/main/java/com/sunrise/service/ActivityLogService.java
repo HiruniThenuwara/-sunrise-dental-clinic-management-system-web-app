@@ -113,6 +113,23 @@ public class ActivityLogService {
         return activityLogDao.search(username, action, from, to, DEFAULT_LIMIT);
     }
 
+    /**
+     * One page of the log, with the same filters applied in the database.
+     *
+     * @param offset how many matching entries to skip
+     * @param limit  how many to return
+     */
+    public List<ActivityLog> searchPage(String username, String action,
+                                        LocalDate from, LocalDate to,
+                                        int offset, int limit) {
+        return activityLogDao.searchPage(username, action, from, to, offset, limit);
+    }
+
+    /** @return how many entries match those filters, for the page count */
+    public int countMatching(String username, String action, LocalDate from, LocalDate to) {
+        return activityLogDao.countSearch(username, action, from, to);
+    }
+
     public int countToday() {
         return activityLogDao.countByDate(LocalDate.now());
     }

@@ -205,4 +205,65 @@ public class DoctorDaoImpl implements DoctorDao {
         doctor.setActive(resultSet.getBoolean("is_active"));
         return doctor;
     }
+
+    @Override
+    public List<Doctor> findPage(int offset, int limit) {
+        return queryPage(SELECT_ALL + " LIMIT ? OFFSET ?", offset, limit);
+    }
+
+    @Override
+    public int countAll() {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT COUNT(*) FROM doctors");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not count the dentists", e);
+            return 0;
+        }
+    }
+
+    private List<Doctor> queryPage(String sql, int offset, int limit) {
+        List<Doctor> doctors = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, Math.max(limit, 1));
+            statement.setInt(2, Math.max(offset, 0));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    doctors.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Could not read a page of dentists", e);
+        }
+        return doctors;
+    }
+
+    @Override
+    public java.math.BigDecimal highestFee() {
+        return singleAmount("SELECT MAX(consultation_fee) FROM doctors",
+                            "Could not read the highest consultation fee");
+    }
+
+    /** Runs a query that returns one money value, or zero when there is none. */
+    private java.math.BigDecimal singleAmount(String sql, String failureMessage) {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                java.math.BigDecimal value = resultSet.getBigDecimal(1);
+                return value == null ? java.math.BigDecimal.ZERO : value;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, failureMessage, e);
+        }
+        return java.math.BigDecimal.ZERO;
+    }
 }

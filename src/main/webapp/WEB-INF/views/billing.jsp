@@ -83,7 +83,6 @@
             <section class="panel no-print">
                 <header class="panel__head">
                     <h3>Bill Details</h3>
-                    <span class="badge badge--muted"><c:out value="${ruleApplied}"/></span>
                 </header>
                 <div class="panel__body">
 
@@ -97,11 +96,10 @@
                         <dt>Visit Date</dt>
                         <dd><c:out value="${appointment.formattedDate}"/>,
                             <c:out value="${appointment.formattedTime}"/></dd>
-                        <dt>Pricing Rule</dt>
-                        <dd><c:out value="${ruleApplied}"/></dd>
                     </dl>
 
                     <hr class="divider">
+                    
 
                     <c:choose>
                         <c:when test="${not empty bill or not empty existingBill}">

@@ -242,4 +242,45 @@ class ActivityLogDaoImplTest {
                 () -> assertTrue(names.contains("admin"))
         );
     }
+
+    // -----------------------------------------------------------------
+    //  Paging
+    // -----------------------------------------------------------------
+
+    @Test
+    @DisplayName("TC-13 a page of the log, with the count that matches it")
+    void readsOnePageOfTheLog() {
+        for (int i = 0; i < 24; i++) {
+            activityLogDao.insert(entry(1, "admin", ActivityAction.LOGIN_SUCCESS, "ref-" + i));
+        }
+
+        assertAll(
+                () -> assertEquals(24, activityLogDao.countSearch(null, null, null, null)),
+                () -> assertEquals(10,
+                        activityLogDao.searchPage(null, null, null, null, 0, 10).size()),
+                () -> assertEquals(4,
+                        activityLogDao.searchPage(null, null, null, null, 20, 10).size())
+        );
+    }
+
+    @Test
+    @DisplayName("TC-14 the filter is applied to the page and to the count alike")
+    void filterReachesBothQueries() {
+        for (int i = 0; i < 15; i++) {
+            activityLogDao.insert(entry(1, "admin", ActivityAction.LOGIN_SUCCESS, "a-" + i));
+        }
+        for (int i = 0; i < 4; i++) {
+            activityLogDao.insert(entry(2, "nimali", ActivityAction.LOGIN_SUCCESS, "n-" + i));
+        }
+
+        assertAll(
+                () -> assertEquals(4, activityLogDao.countSearch("nimali", null, null, null),
+                        "the count must describe the filtered log, not the whole log"),
+                () -> assertEquals(4,
+                        activityLogDao.searchPage("nimali", null, null, null, 0, 10).size()),
+                () -> assertTrue(
+                        activityLogDao.searchPage("nimali", null, null, null, 10, 10).isEmpty(),
+                        "the filtered log has no second page")
+        );
+    }
 }

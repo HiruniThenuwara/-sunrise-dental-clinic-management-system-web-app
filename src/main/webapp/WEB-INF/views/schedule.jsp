@@ -131,13 +131,6 @@
             </table>
         </div>
 
-        <footer class="panel__foot">
-            <p class="hint">
-                A slot is only offered when the whole visit finishes by the closing
-                time. With 45 minute slots a day ending at 17:00 offers 16:15 but
-                not 16:30.
-            </p>
-        </footer>
     </section>
 
     <%-- ---------- generated slots ---------- --%>
