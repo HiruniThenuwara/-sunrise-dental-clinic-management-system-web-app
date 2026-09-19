@@ -100,7 +100,6 @@
 
                     <hr class="divider">
                     
-
                     <c:choose>
                         <c:when test="${not empty bill or not empty existingBill}">
                             <p class="hint">
